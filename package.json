@@ -1,0 +1,15 @@
+{
+  "name": "lazy-doc",
+  "version": "0.0.1",
+  "description": "懒人文档生成工具",
+  "main": "index.js",
+  "scripts": {
+    "test": "node test/test.js"
+  },
+  "keywords": [
+    "doc",
+    "lazy-doc"
+  ],
+  "author": "laomu1988@qq.com",
+  "license": "MIT"
+}
