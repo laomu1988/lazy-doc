@@ -1,6 +1,8 @@
-/**start默认配置*/
+var observable = require('observablejs');
+/*start*/
+// 配置内容
 var default_config = {
-    // 设置自动转换词汇，需要以@开始。@param 将被转换为'参数'
+    // 设置自动转换词汇，需要以@开始。例如@param 将被转换为'参数'
     keys: {
         'author': '作者',
         'description': '详细描述',
@@ -20,102 +22,44 @@ var default_config = {
         {
             start: '<!--@',
             end: '-->'
-        },
-        {
-            start: '/**start',
-            end: '/*end' + '*/' //避免被结束符号替换掉
         }
-    ]
+    ],
+    setTitle: function (title) {
+        return title ? '## ' + title : '';
+    },
+    setDetail: function (detail) {
+        return detail ? '```\n' + detail + '\n```\n' : '';
+    }
 };
 /*end*/
-
-/**扩展属性*/
-compile.extend = function (target, property) {
-    if (!target) {
-        return property;
-    }
-    for (var i in property) {
-        if (typeof target[i] == 'undefined') {
-            target[i] = property[i];
-        }
-    }
-    return target;
-}
-
-/**解析注释内容*/
-function analysis(code, nextLine, config) {
-    console.log('anilysis', code);
-    console.log('nextLine', nextLine);
-    var lines = code.trim().split('\n');
-    var title = '';
-    if (lines[0].match(/^[\s\r\n]*\$/)) {
-        return analysisMethod(code, nextLine, config);
-    }
-
-    if (!lines[0].match(/^[\s\r\n]*@/)) {
-        title = lines.shift();
-    }
-    if (nextLine && nextLine.indexOf('function') >= 0) {
-        nextLine = nextLine.replace(/\=?\s*function/, '');
-        nextLine = nextLine.replace(/\{\s*$/, '');
-        title = nextLine.trim() + ' ' + title;
-    }
-    title = '## ' + title;
-
-    // 替换@属性词
-    for (var i = 0; i < lines.length; i++) {
-        var line = lines[i].replace(/^\s*\*/, '');
-        console.log('line', line);
-        var match = line.match(/\s*@(\w+)/);
-        console.log('matchs', match);
-        if (match && config.keys[match[1]]) {
-            line = line.replace('@' + match[1], config.keys[match[1]]);
-        }
-        console.log('outl', line);
-        lines[i] = line;
-    }
-    // todo：删除前面空格
-    var code = lines.join('\n');
-    if (code) {
-        code = '```\n' + code + '\n```\n';
-        return title + '\n' + code;
-    }
-    return title + '\n';
-}
-
-/**分析执行函数参数*/
-function analysisMethod(code, nextLine, config) {
-    console.log('analysisMethod', code);
-    var funcName;
-    code = code.replace(/\s*\$(\w+)/, function (a, b) {
-        funcName = b;
-        return '';
-    });
-    var func = compile.methods[funcName];
-    if (!func) {
-        return '/** 未知操作：' + funcName + '*/';
-    }
-    var argus = code.trim().split('\n');
-    if (argus.length == 0 && code.trim().indexOf(' ') < 0) {
-        return func(code.trim(), config);
-    }
-    var out = {};
-    for (var i = 0; i < argus.length; i++) {
-        var attrs = argus[i].trim().split(/\s+/);
-        if (attrs[0]) {
-            out[attrs[0]] = attrs[1] || '';
-        }
-    }
-    return func(out, config);
-}
 
 function compile(source, _config) {
     return compile.compile(source, _config);
 }
+observable(compile);
 
-/**@编译文件*/
+compile.config = default_config;
+
+/** 扩展属性，将from对象上的属性全部赋值给target（浅复制）
+ * @target: 增加属性到哪个对象
+ * @form: 从哪个对象读取属性
+ **/
+compile.extend = function (target, from) {
+    if (!target) {
+        return from;
+    }
+    for (var i in from) {
+        if (typeof target[i] == 'undefined') {
+            target[i] = from[i];
+        }
+    }
+    return target;
+};
+
+
+/** 编译文件*/
 compile.compile = function (source, config) {
-    console.log('compile.compile');
+    // console.log('compile.compile');
     if (!source) {
         console.log('source 内容为空！');
         return '';
@@ -123,93 +67,134 @@ compile.compile = function (source, config) {
     config = compile.extend(config, default_config);
     //console.log(config);
     var scopes = config.scopes;
-    var out = '';
-    if (scopes) {
-        for (var i = 0; i < scopes.length; i++) {
-            out += compile.compileScope(source, scopes[i], config);
-            if (config.keep) {
-                source = out;
-                out = '';
-            }
-        }
-    }
-    return config.keep ? source : out;
-};
-
-compile.compileScope = function (source, scope, config) {
-    if (!scope || !scope.start || !scope.end) {
-        consoe.log('compile.compileScope need scope data..{start,end}')
+    if (!source || !scopes || scopes.length == 0) {
         return '';
     }
-    function getStartPlace(from) {
-        //console.log('getStartPlace', from);
-        var start = source.indexOf(scope.start, from);
-        if (start < 0) {
-            return -1;
-        }
-        var lineBefore = source.substring(source.lastIndexOf('\n', start), start);
-        if (lineBefore) {
-            lineBefore = lineBefore.trim();
-            if (lineBefore) {
-                //console.log('lineBefore:', lineBefore);
-                //注释开始没有另起一行
-                return getStartPlace(start + scope.start.length);
+    var reg = scopesReg(scopes);
+    console.log(reg);
+    var len = scopes.length;
+    //start 编译时使用到的临时对象
+    var data = {
+        content: source, // 要拆分的内容
+        scope: null, // 正在解析的边界设置
+        config: config, //配置文件
+        block: '', //注释中要解析内容
+        start: 0, // 注释内容开始位置
+        end: 0, //注释内容结束位置
+        nextLine: '', // 下一行内容
+        title: '', // 解析后块内容标题
+        detail: '', // 解析后的块内容
+        out: '' // 解析后输出内容
+    };//end
+
+    var out = '';
+    var result = source.replace(reg, function () {
+        for (var i = 1; i <= len; i++) {
+            if (arguments[i]) {
+                data.scope = scopes[i - 1];
+                data.block = arguments[i];
+                data.start = arguments[len + 1];
+                data.end = data.start + data.scope.start.length + data.scope.end.length + data.block.length;
+                data.nextLine = compile.getNextLine(source, data.end);
+                data.title = '';
+                data.detail = '';
+                data.out = '';
+                //start 编译某段注释块之前触发before_analysis事件
+                compile.trigger('before_analysis', data);//end
+                compile.analysis(data);
+                data.out += (data.title ? data.title + '\n' : '') + (data.detail ? data.detail + '\n' : '');
+                //start 编译某段注释块之后触发analysis事件
+                compile.trigger('analysis', data); //end
+
+                out += data.out;
+                return data.out;
             }
         }
-        return start;
-    }
+    });
 
-    var start = getStartPlace(0), end = 0, lastEnd = 0;
-    var out = '';
-    // console.log('start', start);
-    while (start >= 0) {
-        if (config.keep) {
-            out += source.substring(lastEnd, start);
+    return config.keep ? result : out;
+};
+function str2reg(str) {
+    return str.replace(/([\\\*\/\+\?\(\)\[\]\!\%\$\^])/g, '\\$1');
+}
+
+function scopesReg(scopes) {
+    if (!scopes || scopes.length == 0) {
+        return null;
+    }
+    var str = '';
+    for (var i = 0; i < scopes.length; i++) {
+        var scope = scopes[i];
+
+        str += (str ? '|' : '') + str2reg(scope.start) + '([\\w\\W]*?)' + str2reg(scope.end);
+    }
+    return new RegExp(str, 'g');
+}
+
+
+/**解析注释内容（可以更改此函数修改替换规则）*/
+compile.analysis = function (data) {
+    if (!data.block) {
+        return '';
+    }
+    var config = data.config;
+    var lines = data.block.split('\n');
+    if (lines[0] && !lines[0].trim()) {
+        lines.shift();
+    }
+    if (lines[0] && lines[0].trim()) {
+        if (!lines[0].match(/^[\s\r\n]*@/)) {
+            data.title = lines.shift();
         }
-        end = source.indexOf(scope.end, start + scope.start.length);
-        var nextLineStart = source.indexOf('\n', end + scope.end.length);
-        nextLine = nextLineStart > 0 ? source.substring(nextLineStart + 1, source.indexOf('\n', nextLineStart + 1)).trim() : '';
-
-        out += analysis(source.substring(start + scope.start.length, end).trim(), nextLine, config) + '\n';
-        //console.log('compileScope', start, end);
-        start = getStartPlace(end + scope.end.length);
-
-        lastEnd = end + scope.end.length;
-        //console.log('lastEnd:', lastEnd);
+    } else {
+        lines.shift();
     }
-    if (config.keep) {
-        out += source.substring(lastEnd);
+
+    if (data.nextLine && data.nextLine.indexOf('function') >= 0) {
+        data.nextLine = data.nextLine.replace(/\=?\s*function/, '');
+        data.nextLine = data.nextLine.replace(/\{\s*$/, '');
+        data.title = data.nextLine.trim() + ' ' + data.title;
     }
-    //console.log('out', out);
-    return out;
+
+    // 替换@属性词
+    for (var i = 0; i < lines.length; i++) {
+        var line = lines[i].replace(/^\s*\*|\s*$/g, '');
+        var match = line.match(/\s*@(\w+)/);
+        // console.log('matchs', match);
+        if (match && config.keys[match[1]]) {
+            line = line.replace('@' + match[1], config.keys[match[1]]);
+        }
+        if (!line) {
+            lines.splice(i, 1);
+            i -= 1;
+            continue;
+        }
+        // console.log('outl', line);
+        lines[i] = line;
+    }
+    // todo：删除前面空格
+    var code = lines.join('\n');
+    data.detail = code;
+    if (data.config && data.config.setTitle) {
+        data.title = data.config.setTitle(data.title);
+    }
+    if (data.config && data.config.setDetail) {
+        data.detail = data.config.setDetail(data.detail);
+    }
+    return data;
 };
 
-var fs = require('fs');
-compile.methods = {
-    /**引用文件*/
-    file: function (args, config) {
-        if (!args) {
-            return '';
-        }
-        console.log(args);
-        var src = typeof args === 'string' ? args : args.src;
-        console.log('methods file: ', src);
-        if (src.config) {
-            try {
-                src.config = JSON.parse(src.config);
-            } catch (e) {
-                console.log('file方法config设置错误,请使用json格式！');
-            }
-        }
-        return compile.compile(fs.readFileSync(src, 'utf8'), src.config);
-    },
-    // 引用一部分
-    part: function (code) {
-
-    },
-    folder: function () {
-
+/** 取得注释块结束后的下一行内容，用来补充注释块内容，比如函数名等 */
+compile.getNextLine = function (source, nowPlace) {
+    var str = source.substring(nowPlace);
+    var start = str.indexOf('\n');
+    var str1 = str.substring(0, start).trim();
+    if (str1) {
+        return str1;
+    } else {
+        return str.substring(start + 1, str.indexOf('\n', start + 1)).trim();
     }
+    return '';
 };
 
 
