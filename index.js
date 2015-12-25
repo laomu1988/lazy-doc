@@ -18,10 +18,6 @@ var default_config = {
         {
             start: '/**@',
             end: '*/'
-        },
-        {
-            start: '<!--@',
-            end: '-->'
         }
     ],
     setTitle: function (title) {
@@ -40,17 +36,40 @@ observable(compile);
 
 compile.config = default_config;
 
-/** 扩展属性，将from对象上的属性全部赋值给target（浅复制）
+/** 扩展属性，将from对象上的属性全部赋值给target
  * @target: 增加属性到哪个对象
  * @form: 从哪个对象读取属性
+ * @deep: 深复制1，浅复制0，不覆盖-1（默认0）
  **/
-compile.extend = function (target, from) {
+compile.extend = function (target, from, deep) {
     if (!target) {
         return from;
     }
     for (var i in from) {
-        if (typeof target[i] == 'undefined') {
-            target[i] = from[i];
+        var type = typeof from[i];
+        if (type == 'object') {
+            if (deep == 1) {
+                if (!target[i]) {
+                    target[i] = {};
+                }
+                compile.extend(target[i], from[i], deep);
+            } else if (deep == -1) {
+                if (typeof target[i] == 'undefined') {
+                    target[i] = from[i];
+                } else if (typeof target[i] == 'object') {
+                    compile.extend(target[i], from[i], deep);
+                }
+            } else {
+                target[i] = from[i];
+            }
+        } else {
+            if (deep == -1) {
+                if (typeof target[i] == 'undefined') {
+                    target[i] = from[i];
+                }
+            } else {
+                target[i] = from[i];
+            }
         }
     }
     return target;
@@ -64,14 +83,14 @@ compile.compile = function (source, config) {
         console.log('source 内容为空！');
         return '';
     }
-    config = compile.extend(config, default_config);
-    //console.log(config);
+    config = compile.extend(config, default_config, -1);
+    // console.log(config);
     var scopes = config.scopes;
     if (!source || !scopes || scopes.length == 0) {
         return '';
     }
     var reg = scopesReg(scopes);
-    console.log(reg);
+    // console.log(reg);
     var len = scopes.length;
     //start 编译时使用到的临时对象
     var data = {
@@ -144,7 +163,7 @@ compile.analysis = function (data) {
     }
     if (lines[0] && lines[0].trim()) {
         if (!lines[0].match(/^[\s\r\n]*@/)) {
-            data.title = lines.shift();
+            data.title += lines.shift();
         }
     } else {
         lines.shift();

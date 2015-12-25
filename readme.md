@@ -32,10 +32,11 @@ var default_config = {
 };
 ```
 
-## compile.extend  (target, from)  扩展属性，将from对象上的属性全部赋值给target（浅复制）
+## compile.extend  (target, from, deep)  扩展属性，将from对象上的属性全部赋值给target
 ```
  @target: 增加属性到哪个对象
  @form: 从哪个对象读取属性
+ @deep: 深复制1，浅复制0，不覆盖-1（默认0）
 ```
 
 ## compile.compile  (source, config)  编译文件
