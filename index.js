@@ -78,19 +78,18 @@ compile.extend = function (target, from, deep) {
 
 /** 编译文件*/
 compile.compile = function (source, config) {
-    // console.log('compile.compile');
+
     if (!source) {
         console.log('source 内容为空！');
         return '';
     }
     config = compile.extend(config, default_config, -1);
-    // console.log(config);
+
     var scopes = config.scopes;
     if (!source || !scopes || scopes.length == 0) {
         return '';
     }
     var reg = scopesReg(scopes);
-    // console.log(reg);
     var len = scopes.length;
     //start 编译时使用到的临时对象
     var data = {
@@ -105,9 +104,11 @@ compile.compile = function (source, config) {
         detail: '', // 解析后的块内容
         out: '' // 解析后输出内容
     };//end
-
+    compile.trigger('before_compile', data);
     var out = '';
-    var result = source.replace(reg, function () {
+    var keep = data.config.keep;
+
+    var result = data.content.replace(reg, function () {
         for (var i = 1; i <= len; i++) {
             if (arguments[i]) {
                 data.scope = scopes[i - 1];
@@ -130,8 +131,13 @@ compile.compile = function (source, config) {
             }
         }
     });
-
-    return config.keep ? result : out;
+    data.scope = null;
+    data.block = '';
+    data.title = '';
+    data.detail = '';
+    data.out = keep ? result : out;
+    compile.trigger('compile', data);
+    return data.out;
 };
 function str2reg(str) {
     return str.replace(/([\\\*\/\+\?\(\)\[\]\!\%\$\^])/g, '\\$1');
@@ -170,7 +176,7 @@ compile.analysis = function (data) {
     }
 
     if (data.nextLine && data.nextLine.indexOf('function') >= 0) {
-        data.nextLine = data.nextLine.replace(/\=?\s*function/, '');
+        data.nextLine = data.nextLine.replace(/\s*\=?\s*function\s*/, '');
         data.nextLine = data.nextLine.replace(/\{\s*$/, '');
         data.title = data.nextLine.trim() + ' ' + data.title;
     }
@@ -179,7 +185,6 @@ compile.analysis = function (data) {
     for (var i = 0; i < lines.length; i++) {
         var line = lines[i].replace(/^\s*\*|\s*$/g, '');
         var match = line.match(/\s*@(\w+)/);
-        // console.log('matchs', match);
         if (match && config.keys[match[1]]) {
             line = line.replace('@' + match[1], config.keys[match[1]]);
         }
@@ -188,7 +193,6 @@ compile.analysis = function (data) {
             i -= 1;
             continue;
         }
-        // console.log('outl', line);
         lines[i] = line;
     }
     // todo：删除前面空格
