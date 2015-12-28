@@ -168,8 +168,14 @@ compile.analysis = function (data) {
         lines.shift();
     }
     if (lines[0] && lines[0].trim()) {
+        // 不是以@开头，以@开头的都是处理函数
         if (!lines[0].match(/^[\s\r\n]*@/)) {
-            data.title += lines.shift();
+            var title = lines.shift().trim();
+            // 去除开头的 *
+            if (title.charAt(0) == '*') {
+                title = title.substr(1).trim();
+            }
+            data.title += title;
         }
     } else {
         lines.shift();
