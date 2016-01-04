@@ -93,6 +93,7 @@ compile.compile = function (source, config) {
     var len = scopes.length;
     //start 编译时使用到的临时对象
     var data = {
+        count: 0, // 第几块内容
         content: source, // 要拆分的内容
         scope: null, // 正在解析的边界设置
         config: config, //配置文件
@@ -109,6 +110,7 @@ compile.compile = function (source, config) {
     var keep = data.config.keep;
 
     var result = data.content.replace(reg, function () {
+        data.count += 1;
         for (var i = 1; i <= len; i++) {
             if (arguments[i]) {
                 data.scope = scopes[i - 1];
