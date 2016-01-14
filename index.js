@@ -14,15 +14,20 @@ var default_config = {
         'return': '返回值'
     },
     keep: false,// 是否保留非注释部分
+    // 边界设置
     scopes: [
         {
-            start: '/**@',
-            end: '*/'
+            start: '/**@', //开始边界
+            end: '*/' //结束边界
         }
     ],
-    setTitle: function (title) {
-        return title ? '## ' + title : '';
+    // 标题前缀
+    titleMark: '##',
+    // 更新标题内容
+    setTitle: function (title, mark) {
+        return title ? (mark ? mark + ' ' : '') + title : '';
     },
+    // 更新详情
     setDetail: function (detail) {
         return detail ? '```\n' + detail + '\n```\n' : '';
     }
@@ -103,12 +108,15 @@ compile.compile = function (source, config) {
         nextLine: '', // 下一行内容
         title: '', // 解析后块内容标题
         detail: '', // 解析后的块内容
-        out: '' // 解析后输出内容
+        out: '', // 解析后输出内容
+        ignore: false //忽略编译内容
     };//end
     compile.trigger('before_compile', data);
     var out = '';
     var keep = data.config.keep;
-
+    if (data.ignore) {
+        return keep ? source : '';
+    }
     var result = data.content.replace(reg, function () {
         data.count += 1;
         for (var i = 1; i <= len; i++) {
@@ -123,11 +131,15 @@ compile.compile = function (source, config) {
                 data.out = '';
                 //start 编译某段注释块之前触发before_analysis事件
                 compile.trigger('before_analysis', data);//end
+                if (data.ignore) {
+                    return keep ? data.block : '';
+                }
                 compile.analysis(data);
-                data.out += (data.title ? data.title + '\n' : '') + (data.detail ? data.detail + '\n' : '');
                 //start 编译某段注释块之后触发analysis事件
                 compile.trigger('analysis', data); //end
-
+                if (data.ignore) {
+                    return keep ? data.block : '';
+                }
                 out += data.out;
                 return data.out;
             }
@@ -183,10 +195,18 @@ compile.analysis = function (data) {
         lines.shift();
     }
 
-    if (data.nextLine && data.nextLine.indexOf('function') >= 0) {
-        data.nextLine = data.nextLine.replace(/\s*\=?\s*function\s*/, '');
-        data.nextLine = data.nextLine.replace(/\{\s*$/, '');
-        data.title = data.nextLine.trim() + ' ' + data.title;
+    if (data.nextLine) {
+        if (data.nextLine.indexOf('function') >= 0) {
+            data.nextLine = data.nextLine.replace(/\s*\=?\s*function\s*/, '');
+            data.nextLine = data.nextLine.replace(/\{\s*$/, '');
+            data.title = data.nextLine.trim() + ' ' + data.title;
+        } else if (data.nextLine.indexOf('=') > 0) {
+            // 下一行包含赋值内容 a=b，则该注释前增加a，表示该注释是变量a的解释
+            var sign = data.nextLine.substr(0, data.nextLine.indexOf('=') - 1).trim();
+            if (sign) {
+                data.title = sign + ' ' + data.title;
+            }
+        }
     }
 
     // 替换@属性词
@@ -207,11 +227,12 @@ compile.analysis = function (data) {
     var code = lines.join('\n');
     data.detail = code;
     if (data.config && data.config.setTitle) {
-        data.title = data.config.setTitle(data.title);
+        data.title = data.config.setTitle(data.title, data.config.titleMark);
     }
     if (data.config && data.config.setDetail) {
         data.detail = data.config.setDetail(data.detail);
     }
+    data.out += (data.title ? data.title + '\n' : '') + (data.detail ? data.detail + '\n' : '');
     return data;
 };
 
