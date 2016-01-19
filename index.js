@@ -18,7 +18,9 @@ var default_config = {
     scopes: [
         {
             start: '/**@', //开始边界
-            end: '*/' //结束边界
+            end: '*/', //结束边界
+            nextLine: true, // 是否自动读取下一行内容，默认true
+            title: true // 注释中是否包含标题，默认true
         }
     ],
     // 标题前缀
@@ -125,7 +127,7 @@ compile.compile = function (source, config) {
                 data.block = arguments[i];
                 data.start = arguments[len + 1];
                 data.end = data.start + data.scope.start.length + data.scope.end.length + data.block.length;
-                data.nextLine = compile.getNextLine(source, data.end);
+                data.nextLine = data.scope.nextLine === false ? '' : compile.getNextLine(source, data.end);
                 data.title = '';
                 data.detail = '';
                 data.out = '';
@@ -179,19 +181,23 @@ compile.analysis = function (data) {
     var config = data.config;
     var lines = data.block.split('\n');
     if (lines[0] && !lines[0].trim()) {
+        // 删掉顶部空行
         lines.shift();
     }
     if (lines[0] && lines[0].trim()) {
         // 不是以@开头，以@开头的都是处理函数
         if (!lines[0].match(/^[\s\r\n]*@/)) {
-            var title = lines.shift().trim();
-            // 去除开头的 *
-            if (title.charAt(0) == '*') {
-                title = title.substr(1).trim();
+            if (data.scope.title !== true) {
+                var title = lines.shift().trim();
+                // 去除开头的 *
+                if (title.charAt(0) == '*') {
+                    title = title.substr(1).trim();
+                }
+                data.title += title;
             }
-            data.title += title;
         }
     } else {
+        //删掉空行
         lines.shift();
     }
 
@@ -202,7 +208,10 @@ compile.analysis = function (data) {
             data.title = data.nextLine.trim() + ' ' + data.title;
         } else if (data.nextLine.indexOf('=') > 0) {
             // 下一行包含赋值内容 a=b，则该注释前增加a，表示该注释是变量a的解释
-            var sign = data.nextLine.substr(0, data.nextLine.indexOf('=') - 1).trim();
+            var sign = data.nextLine.substr(0, data.nextLine.indexOf('=')).trim();
+            if (sign.indexOf('var ') == 0) {
+                sign = sign.substr(3).trim();
+            }
             if (sign) {
                 data.title = sign + ' ' + data.title;
             }
