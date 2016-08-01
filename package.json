@@ -1,15 +1,21 @@
 {
   "name": "lazy-doc",
-  "version": "0.0.6",
-  "description": "懒人文档生成工具",
-  "main": "index.js",
+  "version": "0.1.0",
+  "description": "懒人文档生成工具,js代码自动生成文档",
+  "main": "lib/index.js",
   "scripts": {
-    "test": "node test/test.js"
+    "test": "node test/test.js",
+    "doc": "node test/readme.js"
   },
   "keywords": [
     "doc",
-    "lazy-doc"
+    "lazy-doc",
+    "fe-doc",
+    "jsdoc"
   ],
   "author": "laomu1988@qq.com",
-  "license": "MIT"
+  "license": "MIT",
+  "devDependencies": {
+    "filter-files": "^0.4.0"
+  }
 }

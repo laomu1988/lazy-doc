@@ -1,6 +1,6 @@
-var doc = require('../index.js');
+var doc = require('../src/index.js');
 var fs = require('fs');
 
-var code = doc(fs.readFileSync('src/index.js', 'utf8'));
+var output = doc(__dirname + '/src', __dirname + '/src/index.md');
 
-fs.writeFileSync('doc/doc.md', code, 'utf8');
+console.log(output);
