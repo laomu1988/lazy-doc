@@ -1,12 +1,24 @@
 /**
- * @namespace lazy-doc 懒人文档生成工具
+ * # 懒人文档生成工具
  * 书写js代码,自动生成markdown文档
  * js代码格式参考test/src/index.js
+ * @function lazy-doc
+ *
+ * @param {string} folder 要生成文档的代码所在文件夹
+ * @param {string} output 要写入的文件路径
+ * @param {object} config 文件配置,可参考src/config.json
+ *
  * @install
  * npm install lazy-doc
  * @uaeage
  * var doc = require('lazy-doc');
- * doc(folder,outputFile);
+ * doc(folder,output);
+ *
+ * @todo
+ * - 标记必须放在行的开头才能起作用,避免页内冲突
+ * - 增加结束回调
+ * @history
+ * - 2016.08.11 修改index排序规则,index越大排在前面
  *
  **/
 var config = require('./config');
@@ -50,7 +62,7 @@ module.exports = function (path, output, _config) {
 
     notes.sort(function (k1, k2) {
         if (k1.index !== k2.index) {
-            return k1.index > k2.index;
+            return k1.index < k2.index;
         }
         if (k1.firstKeyVal !== k2.firstKeyVal) {
             return k1.firstKeyVal > k2.firstKeyVal;

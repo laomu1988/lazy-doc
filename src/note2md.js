@@ -1,5 +1,7 @@
 /**
  * 将note转为markdown文件
+ * key: @后的关键词
+ * 
  * */
 function transform(key, val, template, note) {
     if (typeof template == 'function') {

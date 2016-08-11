@@ -14,14 +14,14 @@ var config = {
         'variable'
     ],
     Template: {
-        'constructs': '# {val}',
-        'namespace': '# {val}',
-        'class': '#类 {val}',
-        'module': '##模块 {val}',
-        'object': '##对象 {val}',
-        'function': '### {val} ',
+        'constructs': '# {val}\n',
+        'namespace': '# {val}\n',
+        'class': '# 类 {val}\n',
+        'module': '## 模块 {val}\n',
+        'object': '## 对象 {val}\n',
+        'function': '### {val}\n',
         'var': '### {val} ',
-        'variable': '###变量 {val}',
+        'variable': '### 变量 {val}',
         'author': '作者 {val}',
         'description': '{val}',
         'desc': '{val}',
@@ -33,8 +33,8 @@ var config = {
         'prototype': '原型 {val}',
         'return': '返回值 {val}',
         'returns': '返回列表\n{val}',
-        'example': '```\n{val}```',
-        'index': ''
+        'example': '\n**示例:**\n\n```{val}\n```',
+        'index': '' // 排序使用,越大越靠前
     }
 };
 

@@ -21,7 +21,9 @@ module.exports = function (source) {
             _note: _note,
             nextLine: nextLine
         };
+        // 删除每行开始的*
         note.note = note._note.replace(/\n\s*\*/g, '\n').trim();
+        
         note.note.replace(/@(\w*)([^@$]*)/g, function (all, key, val, index) {
             if (val) {
                 val = val.trimRight();
