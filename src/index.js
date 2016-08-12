@@ -16,11 +16,14 @@
  *
  * @todo
  * - 标记必须放在行的开头才能起作用,避免页内冲突
+ * - 增加raw和endraw,不转换标签中的内容
  * - 增加结束回调
  * @history
+ * - 2016.08.12 自动检查版本更新并提示
  * - 2016.08.11 修改index排序规则,index越大排在前面
  *
  **/
+require('./update.js');
 var config = require('./config');
 var filter = require('filter-files');
 var note2md = require('./note2md');
@@ -28,6 +31,7 @@ var fs = require('fs');
 var getNotes = require('./getNotes');
 var logger = require('logger-color');
 logger.setLevel('warning');
+
 
 module.exports = function (path, output, _config) {
     var files = filter.sync(path);
@@ -62,7 +66,7 @@ module.exports = function (path, output, _config) {
 
     notes.sort(function (k1, k2) {
         if (k1.index !== k2.index) {
-            return k1.index < k2.index;
+            return k2.index - k1.index;
         }
         if (k1.firstKeyVal !== k2.firstKeyVal) {
             return k1.firstKeyVal > k2.firstKeyVal;

@@ -52,6 +52,8 @@ module.exports = function (source) {
             }
         });
 
+        note.index = note.index || 0;
+
         list.push(note);
     });
     return list;
