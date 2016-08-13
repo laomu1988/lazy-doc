@@ -1,28 +1,19 @@
 /**
- * 测试api文档生成器
+ * 测试api文档生成器,计算两个数的和
  * @function
+ * @index 10
  * @params
  *      param1 第一个参数
  *          property: test
  *      param2 第二个参数
- *      必须以@开头
+ * @raw
+ * @raw和@raw-end中间的内容将不会被转化
+ * @raw-end
+ * @return {string}
+ * @example
+ * var a = Add(1,2);
+ *
  */
-function Test(param1, param2) {
+function Add(param1, param2) {
     return param1 + param2;
 }
-
-/**
- * 测试第二个内容
- * @function
- * @param param1 string
- * @param param2 string
- **/
-
-Test2 = function (param1, param2) {
-
-};
-
-
-/**
- * 注释内部不包含
- * */

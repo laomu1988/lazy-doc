@@ -1,4 +1,4 @@
-/**
+/*
  * 根据内容,读取其中注释
  * 输出内容:
  * 假如存在注释,输出注释数组,格式[
@@ -22,18 +22,30 @@ module.exports = function (source) {
             nextLine: nextLine
         };
         // 删除每行开始的*
-        _note = note.note = note._note.replace(/\n\s*\*\s?/g, '\n').trim();
+        _note = note.note = note._note.replace(/\n ?\* ?/g, '\n').trim();
 
-        //console.log(_note);
+        // console.log(_note);
 
-        note.note.replace(/(^|\n)\s*@(\w*)/g, function (all, ch, key, index) {
-            var start = index + all.length - 1;
-            var end = _note.indexOf('\n@', start);
-            var val = end > 0 ? _note.substring(start + 1, end) : _note.substring(start + 1);
+        var now_reach = 0;
+        note.note.replace(/(^|\n)\s*@([\w\-]*)/g, function (all, ch, key, index) {
+            var start = index + all.length - 1, end;
+            if (start < now_reach || key == 'raw-end') {
+                // @raw-end还未结束
+                return;
+            }
+            if (key == 'raw') {
+                end = _note.indexOf('\n@raw-end', start);
+            } else {
+                end = _note.indexOf('\n@', start);
+            }
+            now_reach = end > 0 ? end : _note.length;
+            var val = _note.substring(start + 1, now_reach);
             if (val) {
                 val = val.trimRight();
             }
-            // console.log('key:', key, val, '\n---------');
+
+            //console.log('key:', key, val, '\n---------');
+
             if (key == 'index') {
                 // index 是用来排序的
                 note.index = parseInt(val) || 0;

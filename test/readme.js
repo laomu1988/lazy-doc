@@ -2,5 +2,7 @@
  * 生成readme.md
  * */
 var doc = require('../src/index.js');
-
-doc(__dirname + '/../src/', __dirname + '/../readme.md');
+var fs = require('fs');
+var md = doc(__dirname + '/../src/');
+var tip = fs.readFileSync(__dirname + '/tip.md');
+fs.writeFileSync(__dirname + '/../readme.md', md + '\n' + tip);

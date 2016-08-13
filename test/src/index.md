@@ -1,16 +1,20 @@
-### Test(param1, param2)
+### Add(param1, param2)
 
-测试api文档生成器
+测试api文档生成器,计算两个数的和
 参数列表
 ```
      param1 第一个参数
          property: test
      param2 第二个参数
-     必须以@开头
 ```
+**raw**
+```
+@raw和@raw-end中间的内容将不会被转化
+```
+返回值  {string}
 
-### Test2(param1, param2)
+**示例:**
 
-测试第二个内容
-* param1 string
-* param2 string
+```
+var a = Add(1,2);
+```
