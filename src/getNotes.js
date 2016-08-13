@@ -22,18 +22,23 @@ module.exports = function (source) {
             nextLine: nextLine
         };
         // 删除每行开始的*
-        note.note = note._note.replace(/\n\s*\*/g, '\n').trim();
-        
-        note.note.replace(/@(\w*)([^@$]*)/g, function (all, key, val, index) {
+        _note = note.note = note._note.replace(/\n\s*\*\s?/g, '\n').trim();
+
+        //console.log(_note);
+
+        note.note.replace(/(^|\n)\s*@(\w*)/g, function (all, ch, key, index) {
+            var start = index + all.length - 1;
+            var end = _note.indexOf('\n@', start);
+            var val = end > 0 ? _note.substring(start + 1, end) : _note.substring(start + 1);
             if (val) {
                 val = val.trimRight();
             }
+            // console.log('key:', key, val, '\n---------');
             if (key == 'index') {
                 // index 是用来排序的
                 note.index = parseInt(val) || 0;
                 return;
             }
-            
             var isFirst = false;
             if (!note.firstKey) {
                 note.firstKey = key.trim();
