@@ -1,11 +1,11 @@
 /**
  * 将note转为markdown文件
  * key: @后的关键词
- * 
+ *
  * */
-function transform(key, val, template, note) {
+function transform(key, val, template, index, note) {
     if (typeof template == 'function') {
-        return template(key, val, template, note);
+        return template(key, val, index, note);
     } else if (typeof template == 'string') {
         return template.replace(/\{(\w*)\}/g, function (all, replace) {
             replace = replace.toLowerCase();
@@ -23,15 +23,17 @@ function transform(key, val, template, note) {
 }
 
 module.exports = function (note, config) {
-    var template = config.Template, flag = 0, out = '';
+    var template = config.Template, index = 0, out = '';
     if (note.firstKey && note.firstKeyVal && config.Template[note.firstKey]) {
-        flag += 1;
-        out += transform(note.firstKey, note.firstKeyVal, template[note.firstKey], note) + '\n';
+        // 转换类型
+        index += 1;
+        out += transform(note.firstKey, note.firstKeyVal, template[note.firstKey], index, note) + '\n';
     }
-    if (note.notes && note.notes.length > flag) {
-        for (; flag < note.notes.length; flag++) {
-            var temp = note.notes[flag];
-            out += transform(temp.key, temp.val, template[temp.key], note) + '\n';
+    if (note.notes && note.notes.length > index) {
+        // 转换notes
+        for (; index < note.notes.length; index++) {
+            var temp = note.notes[index];
+            out += transform(temp.key, temp.val, template[temp.key], index, note) + '\n';
         }
     }
     return out;

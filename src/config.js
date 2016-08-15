@@ -27,7 +27,11 @@ var config = {
         'desc': '{val}',
         'detail': '细节 {val}',
         'params': '参数列表\n```{val}\n```',
-        'param': '*{val}',
+        'param': function (key, val, index, all) {
+            // 第一个param之前和最后一个param之后都增加换行符
+            var notes = all.notes, before = notes[index - 1], next = notes[index + 1];
+            return (!before || before.key != key ? '\n' : '') + '* ' + val + (!next || next.key != key ? '\n' : '');
+        },
         'extends': '继承自{val}',
         'property': '属性 {val}',
         'prototype': '原型 {val}',

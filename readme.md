@@ -3,6 +3,11 @@
 # 懒人文档生成工具
 书写js代码,自动生成markdown文档
 js代码格式参考test/src/index.js
+
+*  {string} folder 要生成文档的代码所在文件夹
+*  {string} output 要写入的文件路径
+*  {object} config 文件配置,可参考src/config.json
+
 **install**
 ```
 npm install lazy-doc
@@ -12,20 +17,16 @@ npm install lazy-doc
 var doc = require('lazy-doc');
 doc(folder,output);
 ```
-参数列表
-```
-```
-* {string} folder 要生成文档的代码所在文件夹
-* {string} output 要写入的文件路径
-* {object} config 文件配置,可参考src/config.json
 **todo**
 ```
 ```
 **history**
 ```
+- 2016.08.15
+    * 第一个@param之前和最后一个@param之后增加换行
 - 2016.08.13
-    * 标记必须放在行的开头才能起作用,避免页内冲突
-    * 增加raw和raw-end,不转换标签中的内容
+    * 标记符号@必须放在行的开头才能起作用,避免页内冲突
+    * 增加@raw和@raw-end,不转换标签中的内容
 - 2016.08.12 自动检查版本更新并提示
 - 2016.08.11 修改index排序规则,index越大排在前面
 ```
