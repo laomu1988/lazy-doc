@@ -54,7 +54,7 @@ var config = {
             place = place >= 0 ? place : val.length;
             var title = val.substr(0, place);
             val = val.substr(place + 1);
-            return '\n**示例:**' + title + '\n' + (val.trim() ? '\n```' + val + '\n```\n' : '');
+            return '\n**示例:**' + title + '\n' + (val.trim() ? '\n```\n' + val + '\n```\n' : '');
         }
     }
 };
