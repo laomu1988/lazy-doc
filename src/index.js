@@ -8,11 +8,13 @@
  * @param {object} config 文件配置,可参考src/config.json
  * @install
  * npm install lazy-doc
+ *
  * @uaeage
  * var doc = require('lazy-doc');
  * doc(folder,output);
  *
  * @todo
+ *
  * @history
  * - 2016.08.15
  *     * 第一个@param之前和最后一个@param之后增加换行

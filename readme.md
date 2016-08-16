@@ -9,18 +9,22 @@ js代码格式参考test/src/index.js
 *  {object} config 文件配置,可参考src/config.json
 
 **install**
+
 ```
 npm install lazy-doc
 ```
+
 **uaeage**
+
 ```
 var doc = require('lazy-doc');
 doc(folder,output);
 ```
+
 **todo**
-```
-```
+
 **history**
+
 ```
 - 2016.08.15
     * 第一个@param之前和最后一个@param之后增加换行
@@ -30,6 +34,7 @@ doc(folder,output);
 - 2016.08.12 自动检查版本更新并提示
 - 2016.08.11 修改index排序规则,index越大排在前面
 ```
+
 
 
 ## 书写规范

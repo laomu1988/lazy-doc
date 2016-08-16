@@ -3,7 +3,11 @@
  * key: @后的关键词
  *
  * */
-function transform(key, val, template, index, note) {
+function transform(key, val, template, index, note, config) {
+    var type = typeof template;
+    if (type != 'function' && type != 'string' && config.Template.default) {
+        template = config.Template.default;
+    }
     if (typeof template == 'function') {
         return template(key, val, index, note);
     } else if (typeof template == 'string') {
@@ -27,13 +31,13 @@ module.exports = function (note, config) {
     if (note.firstKey && note.firstKeyVal && config.Template[note.firstKey]) {
         // 转换类型
         index += 1;
-        out += transform(note.firstKey, note.firstKeyVal, template[note.firstKey], index, note) + '\n';
+        out += transform(note.firstKey, note.firstKeyVal, template[note.firstKey], index, note, config) + '\n';
     }
     if (note.notes && note.notes.length > index) {
         // 转换notes
         for (; index < note.notes.length; index++) {
             var temp = note.notes[index];
-            out += transform(temp.key, temp.val, template[temp.key], index, note) + '\n';
+            out += transform(temp.key, temp.val, template[temp.key], index, note, config) + '\n';
         }
     }
     return out;

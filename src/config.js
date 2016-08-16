@@ -14,6 +14,14 @@ var config = {
         'variable'
     ],
     Template: {
+        'default': function (key, val) {
+            var trim = val.trim();
+            if (trim) {
+                return '**' + key + '**\n\n```' + val + '\n```\n';
+            } else {
+                return '**' + key + '**\n';
+            }
+        }, // 默认规则
         'constructs': '# {val}\n',
         'namespace': '# {val}\n',
         'class': '# 类 {val}\n',
@@ -37,8 +45,17 @@ var config = {
         'prototype': '原型 {val}',
         'return': '返回值 {val}',
         'returns': '返回列表\n{val}',
-        'example': '\n**示例:**\n\n```{val}\n```',
-        'index': '' // 排序使用,越大越靠前
+        'index': '', // 排序使用,越大越靠前
+
+
+        'example': function (key, val) {
+            // @example标签之后未换行内容将作为标题后内容展示
+            var place = val.indexOf('\n');
+            place = place >= 0 ? place : val.length;
+            var title = val.substr(0, place);
+            val = val.substr(place + 1);
+            return '\n**示例:**' + title + '\n' + (val.trim() ? '\n```' + val + '\n```\n' : '');
+        }
     }
 };
 
