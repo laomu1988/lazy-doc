@@ -1,6 +1,6 @@
 {
   "name": "lazy-doc",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "description": "懒人文档生成工具,js代码自动生成文档",
   "main": "src/index.js",
   "scripts": {
@@ -16,9 +16,10 @@
   "author": "laomu1988@qq.com",
   "license": "MIT",
   "dependencies": {
-    "filter-files": "^0.4.0",
     "check-update": "0.0.8",
-    "logger-color": "^1.0.2"
+    "filter-files": "^0.4.0",
+    "logger-color": "^1.0.2",
+    "mk-dir": "^1.0.0"
   },
   "repository": {
     "type": "git",

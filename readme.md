@@ -5,7 +5,10 @@
 js代码格式参考test/src/index.js
 
 *  {string} folder 要生成文档的代码所在文件夹
-*  {string} output 要写入的文件路径
+         例如: __dirname + '/src'
+*  output
+       {string} 要写入的文件路径
+       {callback} 文档计算完毕后的回调,有两个参数,所有文档合并后的string和分析后的文档列表
 *  {object} config 文件配置,可参考src/config.json
 
 **install**

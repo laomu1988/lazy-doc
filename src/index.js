@@ -4,7 +4,10 @@
  * js代码格式参考test/src/index.js
  * @function lazy-doc
  * @param {string} folder 要生成文档的代码所在文件夹
- * @param {string} output 要写入的文件路径
+ *          例如: __dirname + '/src'
+ * @param output
+ *        {string} 要写入的文件路径
+ *        {callback} 文档计算完毕后的回调,有两个参数,所有文档合并后的string和分析后的文档列表
  * @param {object} config 文件配置,可参考src/config.json
  * @install
  * npm install lazy-doc
@@ -16,6 +19,8 @@
  * @todo
  *
  * @history
+ * - 2016.08.17
+ *     * 增加回调函数; 可以直接输出文件列表(输出到目录);
  * - 2016.08.15
  *     * 第一个@param之前和最后一个@param之后增加换行
  * - 2016.08.13
@@ -30,6 +35,8 @@ var config = require('./config');
 var filter = require('filter-files');
 var note2md = require('./note2md');
 var fs = require('fs');
+var mkdir = require('mk-dir');
+var Path = require('path');
 var getNotes = require('./getNotes');
 var logger = require('logger-color');
 logger.level = 'notice';
@@ -57,6 +64,7 @@ module.exports = function (path, output, _config) {
                             // console.log('reset firstKeyVal');
                             note.firstKeyVal = note.nextLine.replace(key, '').replace(/\Wvar\W/, '').replace(/[\{\}]*/g, '').replace(/\s*\=\s*/, '').trim();
                         }
+                        note._filepath = filepath;
                         notes.push(note);
                     }
                 });
@@ -78,13 +86,34 @@ module.exports = function (path, output, _config) {
     logger.debug('notes-all-length:', notes.length);
     var md = [];
     notes.forEach(function (note) {
-        md.push(note2md(note, _config));
+        note._md = note2md(note, _config);
+        md.push(note._md);
         logger.debug('transform note to markdown:', md[md.length]);
     });
     var write = md.join('\n');
     if (typeof output == 'string') {
-        logger.notice('Write to File:', output);
-        fs.writeFileSync(output, write, 'utf8');
+        var ext = Path.extname(output);
+        if (ext && ext.length > 1) {
+            logger.notice('Write to File:', output);
+            mkdir(Path.dirname(output));
+            fs.writeFileSync(output, write, 'utf8');
+        } else {
+            // 写入文件列表
+            if (path.indexOf('*') >= 0) {
+                path = Path.dirname(path.substr(0, path.indexOf('*')));
+            }
+            logger.notice('Write to Direction:', output);
+            for (var i = 0; i < notes.length; i++) {
+                var note = notes[i];
+                var filepath = output + '/' + note._filepath.replace(path, '');
+                var filename = Path.basename(filepath);
+                filepath = Path.dirname(filepath) + '/' + filename.substr(0, filename.lastIndexOf('.')) + '.md';
+                mkdir(Path.dirname(filepath));
+                fs.writeFileSync(filepath, note._md, 'utf8');
+            }
+        }
+    } else if (typeof output === 'function') {
+        output(write, notes);
     }
     return write;
 };
