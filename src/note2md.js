@@ -5,8 +5,8 @@
  * */
 function transform(key, val, template, index, note, config) {
     var type = typeof template;
-    if (type != 'function' && type != 'string' && config.Template.default) {
-        template = config.Template.default;
+    if (type != 'function' && type != 'string' && config.default) {
+        template = config.default;
     }
     if (typeof template == 'function') {
         return template(key, val, index, note);
@@ -27,8 +27,8 @@ function transform(key, val, template, index, note, config) {
 }
 
 module.exports = function (note, config) {
-    var template = config.Template, index = 0, out = '';
-    if (note.firstKey && note.firstKeyVal && config.Template[note.firstKey]) {
+    var template = config || {}, index = 0, out = '';
+    if (note.firstKey && note.firstKeyVal && template[note.firstKey]) {
         // 转换类型
         index += 1;
         out += transform(note.firstKey, note.firstKeyVal, template[note.firstKey], index, note, config) + '\n';

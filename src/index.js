@@ -8,7 +8,7 @@
  * @param output
  *        {string} 要写入的文件路径
  *        {callback} 文档计算完毕后的回调,有两个参数,所有文档合并后的string和分析后的文档列表
- * @param {object} config 文件配置,可参考src/config.json
+ * @param {object} config 配置@标记后的输出规则,可参考src/config.json
  * @install
  * npm install lazy-doc
  *
@@ -43,6 +43,7 @@ logger.level = 'notice';
 
 
 module.exports = function (path, output, _config) {
+    path = Path.resolve(path);
     var files = filter.sync(path);
     var notes = [];
     _config = Object.assign({}, config, _config);
@@ -54,9 +55,9 @@ module.exports = function (path, output, _config) {
             if (_notes && _notes.length > 0) {
                 logger.debug('notes-length:', _notes.length);
                 _notes.forEach(function (note) {
-                    logger.debug('note:', note.firstKey, config.modules.indexOf(note.firstKey) >= 0);
+                    logger.debug('note:', note.firstKey);
                     note.file = filepath;
-                    if (note.firstKey && config.modules.indexOf(note.firstKey) >= 0) {
+                    if (note.firstKey) {
                         // console.log('isModule');
                         var key = note.firstKey;
                         // 从下一行中读取函数名或者类名称
@@ -92,6 +93,7 @@ module.exports = function (path, output, _config) {
     });
     var write = md.join('\n');
     if (typeof output == 'string') {
+        output = Path.resolve(output);
         var ext = Path.extname(output);
         if (ext && ext.length > 1) {
             logger.notice('Write to File:', output);
@@ -107,7 +109,8 @@ module.exports = function (path, output, _config) {
                 var note = notes[i];
                 var filepath = output + '/' + note._filepath.replace(path, '');
                 var filename = Path.basename(filepath);
-                filepath = Path.dirname(filepath) + '/' + filename.substr(0, filename.lastIndexOf('.')) + '.md';
+                filepath = Path.resolve(Path.dirname(filepath) + '/' + filename.substr(0, filename.lastIndexOf('.')) + '.md');
+                console.log('Write to File:', filepath);
                 mkdir(Path.dirname(filepath));
                 fs.writeFileSync(filepath, note._md, 'utf8');
             }

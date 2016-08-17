@@ -22,6 +22,14 @@ var a = Add(1,2);
 ```
 
 
+## 模块  Test
+
+测试folder
+
+## 模块  Test
+
+测试jsx
+
 ### test()
 
 测试打包多个文件
