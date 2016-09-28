@@ -9,7 +9,7 @@ js代码格式参考test/src/index.js
 *  output
        {string} 要写入的文件路径
        {callback} 文档计算完毕后的回调,有两个参数,所有文档合并后的string和分析后的文档列表
-*  {object} config 文件配置,可参考src/config.json
+*  {object} config 配置@标记后的输出规则,包含两个参数key和val,当时字符串时自动替换{key}和{val}为文档值,是函数时将被替换为返回内容. 可参考src/config.json
 
 **install**
 
@@ -17,11 +17,22 @@ js代码格式参考test/src/index.js
 npm install lazy-doc
 ```
 
-**uaeage**
+**usage**
 
 ```
 var doc = require('lazy-doc');
-doc(folder,output);
+doc(folder, output, config);
+```
+
+
+**示例:**
+
+```
+var doc = require('lazy-doc');
+doc(__dirname + '/src', __dirname + '/readme.md',{
+     default: '### {key}\n{val}', // 修改默认规则
+     source: '### 源代码地址: {val}'  // 自己制定规则
+});
 ```
 
 **todo**
@@ -29,6 +40,10 @@ doc(folder,output);
 **history**
 
 ```
+- v0.1.7
+     - 使用示例修改
+- 2016.08.17
+    * 增加回调函数; 可以直接输出文件列表(输出到目录);
 - 2016.08.15
     * 第一个@param之前和最后一个@param之后增加换行
 - 2016.08.13
