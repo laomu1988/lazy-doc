@@ -1,5 +1,5 @@
 /**
- * # 懒人文档生成工具
+ * @file 懒人文档生成工具
  * 书写js代码,自动生成markdown文档
  * js代码格式参考test/src/index.js
  * @function lazy-doc
@@ -39,6 +39,8 @@
  * - 2016.08.11 修改index排序规则,index越大排在前面
  *
  **/
+
+/* eslint-disable fecs-camelcase */
 require('./update.js');
 var config = require('./config');
 var filter = require('filter-files');
@@ -49,7 +51,6 @@ var Path = require('path');
 var getNotes = require('./getNotes');
 var logger = require('logger-color');
 logger.level = 'notice';
-
 
 module.exports = function (path, output, _config) {
     path = Path.resolve(path);
@@ -72,14 +73,22 @@ module.exports = function (path, output, _config) {
                         // 从下一行中读取函数名或者类名称
                         if (!note.firstKeyVal && note.nextLine && note.nextLine.indexOf(key) >= 0) {
                             // console.log('reset firstKeyVal');
-                            note.firstKeyVal = note.nextLine.replace(key, '').replace(/\Wvar\W/, '').replace(/[\{\}]*/g, '').replace(/\s*\=\s*/, '').trim();
+                            note.firstKeyVal = note.nextLine.replace(key, '')
+                                .replace(/\Wvar\W/, '')
+                                .replace(/[\{\}]*/g, '')
+                                .replace(/\s*\=\s*/, '')
+                                .trim();
                         }
+
                         note._filepath = filepath;
                         notes.push(note);
                     }
+
                 });
             }
-        } catch (e) {
+
+        }
+        catch (e) {
             console.log(e);
         }
     });
@@ -88,9 +97,11 @@ module.exports = function (path, output, _config) {
         if (k1.index !== k2.index) {
             return k2.index - k1.index;
         }
+
         if (k1.firstKeyVal !== k2.firstKeyVal) {
             return k1.firstKeyVal > k2.firstKeyVal;
         }
+
         return k1.note > k2.note;
     });
     logger.debug('notes-all-length:', notes.length);
@@ -101,18 +112,20 @@ module.exports = function (path, output, _config) {
         logger.debug('transform note to markdown:', md[md.length]);
     });
     var write = md.join('\n');
-    if (typeof output == 'string') {
+    if (typeof output === 'string') {
         output = Path.resolve(output);
         var ext = Path.extname(output);
         if (ext && ext.length > 1) {
             logger.notice('Write to File:', output);
             mkdir(Path.dirname(output));
             fs.writeFileSync(output, write, 'utf8');
-        } else {
+        }
+        else {
             // 写入文件列表
             if (path.indexOf('*') >= 0) {
                 path = Path.dirname(path.substr(0, path.indexOf('*')));
             }
+
             logger.notice('Write to Direction:', output);
             for (var i = 0; i < notes.length; i++) {
                 var note = notes[i];
@@ -124,8 +137,10 @@ module.exports = function (path, output, _config) {
                 fs.writeFileSync(filepath, note._md, 'utf8');
             }
         }
-    } else if (typeof output === 'function') {
+    }
+    else if (typeof output === 'function') {
         output(write, notes);
     }
+
     return write;
 };

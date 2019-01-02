@@ -1,5 +1,5 @@
-/*
- * 根据内容,读取其中注释
+/**
+ * @file 根据内容,读取其中注释
  * 输出内容:
  * 假如存在注释,输出注释数组,格式[
  *      {
@@ -10,11 +10,14 @@
  *      },…
  * ]
  * 不存在注释,则返回null
- * */
+ **/
+
+/* eslint-disable fecs-camelcase */
 module.exports = function (source) {
-    if (!source || typeof source != 'string') {
+    if (!source || typeof source !== 'string') {
         return null;
     }
+
     var list = [];
     source.replace(/\/\*\*([\w\W]*?)\*\/[\s\n]*([^\n]*)/g, function (all, _note, nextLine) {
         var note = {
@@ -28,14 +31,17 @@ module.exports = function (source) {
 
         var now_reach = 0;
         note.note.replace(/(^|\n)\s*@([\w\-]*)/g, function (all, ch, key, index) {
-            var start = index + all.length - 1, end;
-            if (start < now_reach || key == 'raw-end') {
+            var start = index + all.length - 1;
+            var end;
+            if (start < now_reach || key === 'raw-end') {
                 // @raw-end还未结束
                 return;
             }
-            if (key == 'raw') {
+
+            if (key === 'raw') {
                 end = _note.indexOf('\n@raw-end', start);
-            } else {
+            }
+            else {
                 end = _note.indexOf('\n@', start);
             }
             now_reach = end > 0 ? end : _note.length;
@@ -44,22 +50,25 @@ module.exports = function (source) {
                 val = val.trimRight();
             }
 
-            //console.log('key:', key, val, '\n---------');
+            // console.log('key:', key, val, '\n---------');
 
-            if (key == 'index') {
+            if (key === 'index') {
                 // index 是用来排序的
-                note.index = parseInt(val) || 0;
+                note.index = parseInt(val, 10) || 0;
                 return;
             }
+
             var isFirst = false;
             if (!note.firstKey) {
                 note.firstKey = key.trim();
                 if (val && val.length > 0) {
                     note.firstKeyVal = val;
                 }
+
                 note.notes = [];
                 isFirst = true;
             }
+
             note.notes.push({key: key, val: val});
             if (isFirst && index > 0) {
                 var desc = note.note.substr(0, index).trimRight();
@@ -67,6 +76,7 @@ module.exports = function (source) {
                     note.notes.push({key: 'desc', val: desc});
                 }
             }
+
         });
 
         note.index = note.index || 0;

@@ -1,5 +1,5 @@
 /**
- * 生成readme.md
+ * @file 生成readme.md
  * */
 var doc = require('../src/index.js');
 var fs = require('fs');
