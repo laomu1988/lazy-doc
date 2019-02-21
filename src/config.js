@@ -37,6 +37,8 @@ var config = {
     'prototype': '原型 {val}',
     'return': '返回值 {val}',
     'returns': '返回列表\n{val}',
+    'history': '# 更新记录\n{val}',
+    'todo': '# Todo\n{val}',
     'index': '', // 排序使用,越大越靠前
 
     'example': function (key, val) {
