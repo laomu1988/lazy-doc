@@ -33,7 +33,7 @@ function transform(key, val, template, index, note, config) {
     }
 }
 
-module.exports = function (note, config) {
+export default function (note, config) {
     var template = config || {};
     var index = 0;
     var out = '';

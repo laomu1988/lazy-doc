@@ -1,7 +1,7 @@
 /**
  * @file 注释及生成内容配置项
  * */
-var config = {
+export default {
     'default': function (key, val) {
         var trim = val.trim();
         if (trim) {
@@ -17,6 +17,7 @@ var config = {
     'module': '## 模块 {val}\n',
     'object': '## 对象 {val}\n',
     'file': '',
+    'typedef': '\n## {val}',
     'function': '### {val}\n',
     'var': '#### {val} ',
     'variable': '#### 变量 {val}',
@@ -50,5 +51,3 @@ var config = {
         return '\n**示例:**' + title + '\n' + (val.trim() ? '\n```\n' + val + '\n```\n' : '');
     }
 };
-
-module.exports = config;

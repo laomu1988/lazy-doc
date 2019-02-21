@@ -1,0 +1,19 @@
+{
+    "eslint": {
+        "global": {
+            "describe": true,
+            "it": true,
+            "test": true
+        },
+        "env": {
+            "commonjs": true,
+            "es6": true,
+            "browser": true
+        },
+        "rules": {
+            "no-func-assign": 2,
+            "no-console": 0,
+            "camelcase": 0
+        }
+    }
+}

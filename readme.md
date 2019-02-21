@@ -45,14 +45,6 @@ doc(__dirname + '/src', __dirname + '/readme.md',{
 * [修改记录](https://github.com/laomu1988/lazy-doc/blob/master/package.json)
 
 
-
-
-
-
-
-
-
-
 ## 书写规范
 * 注释以/**开头,并以*/结尾.并且其中包含以@开头的说明
 * @标记只能出现在行的开头(之前可以加一个*),行中间的@标记将不被作为格式标记处理

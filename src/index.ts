@@ -34,31 +34,27 @@
  **/
 
 /* eslint-disable fecs-camelcase */
-require('./update.js');
-var config = require('./config');
-var filter = require('filter-files');
-var note2md = require('./note2md');
-var fs = require('fs');
-var mkdir = require('mk-dir');
-var Path = require('path');
-var getNotes = require('./getNotes');
-var logger = require('logger-color');
-logger.level = 'notice';
+import * as filter from 'filter-files';
+import * as fs from 'fs';
+import mkdir from 'mk-dir';
+import * as Path from 'path';
+import note2md from './note2md';
+import getNotes from './getNotes';
+import config from './config';
+
 
 module.exports = function (path, output, _config) {
     path = Path.resolve(path);
-    var files = filter.sync(path);
-    var notes = [];
+    let stat = fs.statSync(path);
+    let files = stat.isDirectory() ? filter.sync(path) : [path];
+    let notes = [];
     _config = Object.assign({}, config, _config);
     files.forEach(function (filepath) {
         try {
-            logger.info('analysis file: ', filepath);
             var source = fs.readFileSync(filepath, 'utf8');
             var _notes = getNotes(source);
             if (_notes && _notes.length > 0) {
-                logger.debug('notes-length:', _notes.length);
                 _notes.forEach(function (note) {
-                    logger.debug('note:', note.firstKey);
                     note.file = filepath;
                     if (note.firstKey) {
                         // console.log('isModule');
@@ -86,30 +82,27 @@ module.exports = function (path, output, _config) {
         }
     });
 
-    notes.sort(function (k1, k2) {
+    notes.sort((k1: any, k2: any) =>{
         if (k1.index !== k2.index) {
             return k2.index - k1.index;
         }
 
         if (k1.firstKeyVal !== k2.firstKeyVal) {
-            return k1.firstKeyVal > k2.firstKeyVal;
+            return k1.firstKeyVal > k2.firstKeyVal ? 1 : -1;
         }
 
-        return k1.note > k2.note;
+        return k1.note > k2.note ? 1 : -1;
     });
-    logger.debug('notes-all-length:', notes.length);
     var md = [];
     notes.forEach(function (note) {
         note._md = note2md(note, _config);
         md.push(note._md);
-        logger.debug('transform note to markdown:', md[md.length]);
     });
     var write = md.join('\n');
     if (typeof output === 'string') {
         output = Path.resolve(output);
         var ext = Path.extname(output);
         if (ext && ext.length > 1) {
-            logger.notice('Write to File:', output);
             mkdir(Path.dirname(output));
             fs.writeFileSync(output, write, 'utf8');
         }
@@ -119,7 +112,6 @@ module.exports = function (path, output, _config) {
                 path = Path.dirname(path.substr(0, path.indexOf('*')));
             }
 
-            logger.notice('Write to Direction:', output);
             for (var i = 0; i < notes.length; i++) {
                 var note = notes[i];
                 var filepath = output + '/' + note._filepath.replace(path, '');

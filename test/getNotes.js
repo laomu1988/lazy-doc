@@ -1,6 +1,9 @@
-var fs = require('fs');
-var note = require('../src/getNotes');
+/**
+ * @file 测试获取notes函数
+ */
+let fs = require('fs');
+let note = require('../src/getNotes');
 
-var source = fs.readFileSync('./src/index.js', 'utf8');
+let source = fs.readFileSync('./src/getNotes.js', 'utf8');
 
-console.log(note(source));
+console.log(JSON.stringify(note(source), null, 4));
