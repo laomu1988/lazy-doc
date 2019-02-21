@@ -16,6 +16,7 @@ var config = {
     'class': '# 类 {val}\n',
     'module': '## 模块 {val}\n',
     'object': '## 对象 {val}\n',
+    'file': '',
     'function': '### {val}\n',
     'var': '#### {val} ',
     'variable': '#### 变量 {val}',

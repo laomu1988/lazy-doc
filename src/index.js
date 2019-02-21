@@ -1,14 +1,15 @@
 /**
- * @file 懒人文档生成工具
+ * # 懒人文档生成工具
  * 书写js代码,自动生成markdown文档
  * js代码格式参考test/src/index.js
  * @function lazy-doc
  * @param {string} folder 要生成文档的代码所在文件夹
  *          例如: __dirname + '/src'
- * @param output
- *        {string} 要写入的文件路径
- *        {callback} 文档计算完毕后的回调,有两个参数,所有文档合并后的string和分析后的文档列表
+ * @param {string|Function} output
+ *        当为string时，表示要写入的文件路径
+ *        当为Function时，文档计算完毕后的回调,有两个参数,所有文档合并后的string和分析后的文档列表
  * @param {object} config 配置@标记后的输出规则,包含两个参数key和val,当时字符串时自动替换{key}和{val}为文档值,是函数时将被替换为返回内容. 可参考src/config.json
+ *
  * @install
  * npm install lazy-doc
  *
@@ -27,7 +28,7 @@
  *
  * @history
  * - v0.1.7
- *      - 使用示例修改
+ *     * 使用示例修改
  * - 2016.08.17
  *     * 增加回调函数; 可以直接输出文件列表(输出到目录);
  * - 2016.08.15

@@ -4,6 +4,11 @@
   "description": "懒人文档生成工具,js代码自动生成文档",
   "main": "src/index.js",
   "scripts": {
+    "release4": "standard-version --prerelease",
+    "release3": "standard-version --release-as patch",
+    "release2": "standard-version --release-as minor",
+    "release1": "standard-version --release-as major",
+    "release": "standard-version",
     "test": "node test/test.js",
     "doc": "node test/readme.js"
   },
@@ -24,5 +29,15 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/laomu1988/lazy-doc.git"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "npm test",
+      "commitmsg": "commitlint -E GIT_PARAMS"
+    }
+  },
+  "devDependencies": {
+    "husky": "^1.3.1",
+    "standard-version": "^5.0.0"
   }
 }
