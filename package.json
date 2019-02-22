@@ -39,7 +39,7 @@
   "husky": {
     "hooks": {
       "pre-commit": "npm test",
-      "commitmsg": "npm run doc && commitlint -E GIT_PARAMS"
+      "commitmsg": "npm run doc && npm run test && commitlint -E GIT_PARAMS"
     }
   },
   "devDependencies": {

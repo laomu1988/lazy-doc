@@ -8,10 +8,10 @@
  * @function lazy-doc 懒人文档生成工具
  * @param {string} folder 要生成文档的代码所在文件夹
  *          例如: __dirname + '/src'
- * @param {string|Function} output
+ * @param {string|Function} [output] 输出位置。
  *        当为string时，表示要写入的文件路径
  *        当为Function时，文档计算完毕后的回调,有两个参数,所有文档合并后的string和分析后的文档列表
- * @param {object} options 配置项。配置@标记后的输出规则,包含两个参数key和val,当时字符串时自动替换{key}和{value}为文档值,是函数时将被替换为返回内容. 可参考https://github.com/laomu1988/lazy-doc/blob/master/src/template.ts
+ * @param {object} [options] 配置项。配置@标记后的输出规则,包含两个参数key和val,当时字符串时自动替换{key}和{value}为文档值,是函数时将被替换为返回内容. 可参考https://github.com/laomu1988/lazy-doc/blob/master/src/template.ts
  *
  * @install
  * npm install lazy-doc
@@ -58,7 +58,7 @@ module.exports = function (path, output, options) {
             marks = marks.concat(mark);
         }
         catch (e) {
-            console.log(e);
+            console.error('LazyDocError', e);
         }
     });
     marks.sort((m1, m2) => m1.index - m2.index);
@@ -66,7 +66,6 @@ module.exports = function (path, output, options) {
         mark.markdown = utils.parseNoteMark(mark, options);
         return mark.markdown;
     }).join('\n');
-    console.log('marks', JSON.stringify(marks, null, 4));
     
     if (typeof output === 'string' && output) {
         output = Path.resolve(output);

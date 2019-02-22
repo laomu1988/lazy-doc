@@ -1,5 +1,3 @@
-import { SSL_OP_SSLREF2_REUSE_CERT_TYPE_BUG } from "constants";
-
 /**
  * @file 公共函数
  */
@@ -42,7 +40,6 @@ export function getNotes(source: string) {
         });
         return block;
     });
-    console.log('list:', JSON.stringify(list));
     return list;
 }
 
@@ -145,8 +142,8 @@ export function parseNoteMark(noteMark: any, config) {
             key: mark.key,
             value: mark.value,
             index,
-            prev: noteMark[index - 1],
-            next: noteMark[index + 1],
+            prev: noteMark.marks[index - 1],
+            next: noteMark.marks[index + 1],
             noteMark,
             config
         }) + '\n';
@@ -185,4 +182,39 @@ export function code2md(source, config) {
         .map(note => getNoteMark(note, source))
         .map(mark => parseNoteMark(mark, config));
     return marks.join('');
+}
+
+/**
+ * 解析参数含义
+ * @param {string} value 要转换的参数解释内容
+ * @return {Parsed} 解析后的参数
+ */
+export function parseParam(value: String): Parsed {
+    let matches = value.match(/\s*({[\w|\s]*?})?\s*(\[?\s*\b\w+\b\s*\]?)\s?([\s\S]*)/);
+    if (!matches) {
+        return null;
+    }
+    let name = matches[2] || '';
+    return {
+        type: (matches[1] || '').replace(/[{}]/g, ''),
+        name: name.replace(/[\[\]]/g, '').trim(),
+        optional: (name).indexOf('[') >= 0,
+        desc: matches[3],
+        // default: default
+    }
+}
+
+/**
+ * @typedef {Object} Parsed 参数解析后数据对象
+ * @property {string} type 参数数据类型
+ * @property {string} name 参数名称
+ * @property {string} desc 参数说明
+ * @property {boolean} optional 是否必填
+ */
+interface Parsed {
+    type: string,
+    name: string,
+    desc: string,
+    optional: boolean,
+    // default: string|undefined
 }

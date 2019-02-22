@@ -1,6 +1,8 @@
 /**
  * @file 注释及生成内容配置项
  * */
+import * as utils from './utils';
+
 export default {
     'default': function (key, value = '') {
         var trim = (value + '').trim();
@@ -26,14 +28,10 @@ export default {
     'desc': '{value}',
     'detail': '**细节** {value} ',
     'params': '**参数列表**\n```\n{value}\n```',
-    'param': function (key, value, options) {
-        // 第一个param之前和最后一个param之后都增加换行符
-        var prev = options.prev;
-        var next = options.next;
-        return (!prev || prev.key !== key ? '' : '') + '* ' + value + (!next || next.key !== key ? '' : '');
-    },
+    // 使用列表展示参数
+    'param': tableParams,
     'extends': '继承自 {value} ',
-    'property': '属性 {value} ',
+    'property': (key, value, options) => tableParams(key, value, options, '属性'),
     'prototype': '原型 {value} ',
     'return': '返回值 {value} ',
     'returns': '返回列表\n{value} ',
@@ -50,3 +48,19 @@ export default {
         return '\n**示例**' + title.trim() + '\n' + (value.trim() ? '```\n' + value + '\n```\n' : '');
     }
 };
+
+// 使用列表展示参数
+function tableParams(key: string, value: string, options: any, typeName = '参数') {
+    let prev = options.prev;
+    let next = options.next;
+    let parsed = utils.parseParam(value);
+    let result = '';
+    if (!prev || prev.key !== key) {
+        result += `| ${typeName} | 说明 | 类型 |\n| --- | --- | --- |\n`;
+    }
+    result += `| ${parsed.name} | ${parsed.desc.replace(/\n/g, ' ')} | ${parsed.type} |`;
+    if (!next || next.key !== key) {
+        result += '\n'
+    }
+    return result;
+}

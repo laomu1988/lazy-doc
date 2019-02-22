@@ -73,3 +73,24 @@ test('utils.transform', () => {
         expect(utils.transform(s.key, s.value, s.template)).toBe(s.result);
     })
 });
+
+let source = [
+    [
+        '普通参数',
+        '{string} test 测试参数',
+        {type: 'string', name: 'test', desc: '测试参数', optional: false}
+    ],
+    [
+        '可选参数',
+        '{string} [test] 测试参数',
+        {type: 'string', name: 'test', desc: '测试参数', optional: true},
+    ],
+    // [
+    //     '默认值',
+    //     '{string} [test=abc dd] 测试参数',
+    //     {type: 'string', name: 'test', desc: '测试参数', optional: true, default: 'abc dd'},
+    // ],
+];
+test.each(source)('utils.parseParam %s', (name, str, result) => {
+    expect(utils.parseParam(str)).toEqual(result);
+});

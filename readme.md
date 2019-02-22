@@ -2,12 +2,12 @@
 
 
 ###  lazy-doc 懒人文档生成工具
-*  {string} folder 要生成文档的代码所在文件夹
-         例如: __dirname + '/src'
-*  {string|Function} output
-       当为string时，表示要写入的文件路径
-       当为Function时，文档计算完毕后的回调,有两个参数,所有文档合并后的string和分析后的文档列表
-*  {object} options 配置项。配置@标记后的输出规则,包含两个参数key和val,当时字符串时自动替换{key}和{value}为文档值,是函数时将被替换为返回内容. 可参考https://github.com/laomu1988/lazy-doc/blob/master/src/template.ts
+| 参数 | 说明 | 类型 |
+| --- | --- | --- |
+| folder | 要生成文档的代码所在文件夹          例如: __dirname + '/src' | string |
+| output | 输出位置。        当为string时，表示要写入的文件路径        当为Function时，文档计算完毕后的回调,有两个参数,所有文档合并后的string和分析后的文档列表 | string|Function |
+| options | 配置项。配置@标记后的输出规则,包含两个参数key和val,当时字符串时自动替换{key}和{value}为文档值,是函数时将被替换为返回内容. 可参考https://github.com/laomu1988/lazy-doc/blob/master/src/template.ts | object |
+
 
 **install**
 ```
