@@ -10,11 +10,16 @@
     "release2": "standard-version --release-as minor",
     "release1": "standard-version --release-as major",
     "release": "standard-version",
-    "doc": "npm run build && node test/readme.js",
+    "doc": "npm run build && node bin/lazydoc.js ./readme.md",
     "test": "jest"
   },
+  "bin": {
+    "lazydoc": "./bin/lazydoc.js"
+  },
   "jest": {
-    "testMatch": ["**/*.test.[jt]s?(x)"], 
+    "testMatch": [
+      "**/*.test.[jt]s?(x)"
+    ],
     "transform": {
       "^.+\\.(js|jsx|ts|tsx)$": "./test/transform.js"
     }
@@ -29,6 +34,7 @@
   "license": "MIT",
   "dependencies": {
     "@types/node": "^11.9.4",
+    "commander": "^2.19.0",
     "filter-files": "^0.4.0",
     "mk-dir": "^1.0.0"
   },

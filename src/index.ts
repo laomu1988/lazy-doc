@@ -26,12 +26,6 @@
  *      default: '### {key}\n{value}', // 修改默认规则
  *      source: '### 源代码地址: {value}'  // 自己制定规则
  * });
- *
- * @todo
- * * [ ] 生成数据数组
- * * [ ] Markdown内部配置后自更新
- * * [ ] 函数参数改为表格输出
- *
  **/
 
 /* eslint-disable fecs-camelcase */
@@ -109,13 +103,16 @@ function isDirectory(path) {
 
 // markdown文件处理
 export function Markdown(source, filepath) {
+    console.log('markdown:', filepath);
     let result = source.replace(/(<!--+@doc\s([\w.\/]+)--+>)[\s\S]*?(<!--+@end--+>)/g, function(all, pre, path) {
         path = Path.dirname(filepath) + '/' + path;
-        console.log('source:', path);
         let md = doc(path);
+        console.log('file in markdown:', path);
+        // console.log('source:', {path, pre, md});
         return pre + '\n' + md + '\n<!--@end-->';
     });
     if (filepath) {
+        console.log('update', filepath);
         fs.writeFileSync(filepath, result, 'utf8');
     }
     return result;

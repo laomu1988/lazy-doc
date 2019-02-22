@@ -34,16 +34,24 @@ doc(__dirname + '/src', __dirname + '/readme.md',{
 });
 ```
 
-# Todo
-* [ ] 生成数据数组
-* [ ] Markdown内部配置后自更新
-* [ ] 函数参数改为表格输出 
+
+<!--@end-->
+<!--@doc bin/lazydoc.js-->
+
+
+
+## 命令行工具使用
+```sh
+# 需要先全局安装lazy-doc，`npm install -g lazy-doc`
+lazydoc readme.md
+lazydoc filename -o dest_filename
+```
 
 <!--@end-->
 
 ## 更新记录 (https://github.com/laomu1988/lazy-doc/blob/master/package.json) 
 
 ## 书写规范
-* 注释以/**开头,并以*/结尾.并且其中包含以@开头的说明
+* 注释以`/**`开头,并以`*/`结尾.并且其中包含以@开头的说明
 * @标记只能出现在行的开头(之前可以加一个*),行中间的@标记将不被作为格式标记处理
 * 一个注释内的第一个@标记后面将表示该注释模块的类型,例如 函数,模块,变量等

@@ -23,7 +23,7 @@ export default {
     'function': '\n### {value}',
     'var': '#### {value}  ',
     'variable': '#### 变量 {value} ',
-    'author': '**作者** {value} ',
+    'author': '',
     'description': '{value}',
     'desc': '{value}',
     'detail': '**细节** {value} ',
@@ -36,6 +36,7 @@ export default {
     'return': '返回值 {value} ',
     'returns': '返回列表\n{value} ',
     'history': '\n# 更新记录\n{value} ',
+    'raw': '{value.trim()}',
     'todo': '# Todo{value} ',
     'index': '', // 排序使用,越大越靠前
 
