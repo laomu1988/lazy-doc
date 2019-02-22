@@ -1,3 +1,8 @@
+# 简单的文档生成工具
+* 根据代码注释生成文档
+* 根据markdown中注释替换文件
+
+<!--@doc src/index.ts-->
 
 
 
@@ -38,6 +43,9 @@ doc(__dirname + '/src', __dirname + '/readme.md',{
 
 * [修改记录](https://github.com/laomu1988/lazy-doc/blob/master/package.json) 
 
+<!--@end-->
+
+## 更新记录 (https://github.com/laomu1988/lazy-doc/blob/master/package.json) 
 
 ## 书写规范
 * 注释以/**开头,并以*/结尾.并且其中包含以@开头的说明

@@ -32,8 +32,6 @@
  * * [ ] Markdown内部配置后自更新
  * * [ ] 函数参数改为表格输出
  *
- * @history
- * * [修改记录](https://github.com/laomu1988/lazy-doc/blob/master/package.json)
  **/
 
 /* eslint-disable fecs-camelcase */
@@ -44,7 +42,7 @@ import mkdir from 'mk-dir';
 import templates from './templates';
 import * as utils from './utils';
 
-module.exports = function (path, output, options) {
+export default function doc(path, output: string|Function = '', options = null) {
     path = Path.resolve(path);
     let files = isDirectory(path) ? filter.sync(path) : [path];
     let marks = [];
@@ -52,6 +50,10 @@ module.exports = function (path, output, options) {
     files.forEach(function (filepath) {
         try {
             let source = fs.readFileSync(filepath, 'utf8');
+            let ext = Path.extname(filepath);
+            if (ext.toLowerCase() === '.md') {
+                return Markdown(source, filepath);
+            }
             let notes = utils.getNotes(source);
             let mark = notes.map(note => utils.getNoteMark(note, source));
             marks.forEach(mark => mark.filepath = filepath);
@@ -104,3 +106,19 @@ function isDirectory(path) {
     let stat = fs.statSync(path);
     return stat.isDirectory();
 }
+
+// markdown文件处理
+export function Markdown(source, filepath) {
+    let result = source.replace(/(<!--+@doc\s([\w.\/]+)--+>)[\s\S]*?(<!--+@end--+>)/g, function(all, pre, path) {
+        path = Path.dirname(filepath) + '/' + path;
+        console.log('source:', path);
+        let md = doc(path);
+        return pre + '\n' + md + '\n<!--@end-->';
+    });
+    if (filepath) {
+        fs.writeFileSync(filepath, result, 'utf8');
+    }
+    return result;
+}
+
+module.exports = doc;
