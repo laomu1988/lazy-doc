@@ -39,10 +39,6 @@ doc(__dirname + '/src', __dirname + '/readme.md',{
 * [ ] Markdown内部配置后自更新
 * [ ] 函数参数改为表格输出 
 
-# 更新记录
-
-* [修改记录](https://github.com/laomu1988/lazy-doc/blob/master/package.json) 
-
 <!--@end-->
 
 ## 更新记录 (https://github.com/laomu1988/lazy-doc/blob/master/package.json) 

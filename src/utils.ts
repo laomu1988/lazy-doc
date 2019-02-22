@@ -83,17 +83,10 @@ export function getNoteMark(note: Note, source: string) {
     content.replace(/(^|\n)\s*@([\w\-]*)/g, (all: string, ch: string, key: string, index: number) => {
         let start = index + all.length - 1;
         let end;
-        if (start < now_reach || key === 'raw-end') {
-            // @raw-end还未结束
+        if (start < now_reach) {
             return '';
         }
-
-        if (key === 'raw') {
-            end = content.indexOf('\n@raw-end', start);
-        }
-        else {
-            end = content.indexOf('\n@', start);
-        }
+        end = content.indexOf('\n@', start);
         now_reach = end > 0 ? end : content.length;
         let value = content.substring(start + 1, now_reach);
         if (value) {
