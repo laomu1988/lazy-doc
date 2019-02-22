@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+# [0.2.0](https://github.com/laomu1988/lazy-doc/compare/v0.1.8...v0.2.0) (2019-02-22)
+
+
+### Features
+
+* 删除[@raw](https://github.com/raw)和[@raw-end](https://github.com/raw-end) ([94d893d](https://github.com/laomu1988/lazy-doc/commit/94d893d))
+* 参数param和属性property输出为表格格式 ([f9ade4c](https://github.com/laomu1988/lazy-doc/commit/f9ade4c))
+* 增加命令行工具 ([ff9b57e](https://github.com/laomu1988/lazy-doc/commit/ff9b57e))
+* 清理多余的空行 ([bc36b3a](https://github.com/laomu1988/lazy-doc/commit/bc36b3a))
+* 直接读取markdown文件并根据其中注释更新其内容 ([29f947a](https://github.com/laomu1988/lazy-doc/commit/29f947a))
+
 ## 0.1.8 (2019-02-21)
 * 增加ChangeLog
 
