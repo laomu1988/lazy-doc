@@ -5,7 +5,7 @@ export default {
     'default': function (key, value = '') {
         var trim = (value + '').trim();
         if (trim) {
-            return '\n**' + key + '**\n\n```' + value + '\n```';
+            return '\n**' + key + '**\n```\n' + value.trim() + '\n```';
         }
         else {
             return '\n**' + key + '**';
@@ -21,11 +21,11 @@ export default {
     'function': '\n### {value}',
     'var': '#### {value}  ',
     'variable': '#### 变量 {value} ',
-    'author': '作者 {value} ',
-    'description': '{value} ',
-    'desc': '{value} ',
-    'detail': '细节 {value} ',
-    'params': '参数列表\n```{value} \n```',
+    'author': '**作者** {value} ',
+    'description': '{value}',
+    'desc': '{value}',
+    'detail': '**细节** {value} ',
+    'params': '**参数列表**\n```\n{value}\n```',
     'param': function (key, value, options) {
         // 第一个param之前和最后一个param之后都增加换行符
         var prev = options.prev;
@@ -38,7 +38,7 @@ export default {
     'return': '返回值 {value} ',
     'returns': '返回列表\n{value} ',
     'history': '\n# 更新记录\n{value} ',
-    'todo': '# Todo\n{value} ',
+    'todo': '# Todo{value} ',
     'index': '', // 排序使用,越大越靠前
 
     'example': function (key, value) {
@@ -47,6 +47,6 @@ export default {
         place = place >= 0 ? place : value.length;
         var title = value.substr(0, place);
         value = value.substr(place + 1);
-        return '\n**示例:**' + title + '\n' + (value.trim() ? '\n```\n' + value + '\n```\n' : '');
+        return '\n**示例**' + title.trim() + '\n' + (value.trim() ? '```\n' + value + '\n```\n' : '');
     }
 };

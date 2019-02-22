@@ -10,20 +10,17 @@
 *  {object} options 配置项。配置@标记后的输出规则,包含两个参数key和val,当时字符串时自动替换{key}和{value}为文档值,是函数时将被替换为返回内容. 可参考https://github.com/laomu1988/lazy-doc/blob/master/src/template.ts
 
 **install**
-
 ```
 npm install lazy-doc
 ```
 
 **usage**
-
 ```
 var doc = require('lazy-doc');
 doc(folder, output, config);
 ```
 
-**示例:**
-
+**示例**
 ```
 var doc = require('lazy-doc');
 doc(__dirname + '/src', __dirname + '/readme.md',{
@@ -33,7 +30,6 @@ doc(__dirname + '/src', __dirname + '/readme.md',{
 ```
 
 # Todo
-
 * [ ] 生成数据数组
 * [ ] Markdown内部配置后自更新
 * [ ] 函数参数改为表格输出 
