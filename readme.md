@@ -1,15 +1,13 @@
-###  lazy-doc
 
-# 懒人文档生成工具
-书写js代码,自动生成markdown文档
-js代码格式参考test/src/index.js
 
+
+###  lazy-doc 懒人文档生成工具
 *  {string} folder 要生成文档的代码所在文件夹
          例如: __dirname + '/src'
 *  {string|Function} output
        当为string时，表示要写入的文件路径
        当为Function时，文档计算完毕后的回调,有两个参数,所有文档合并后的string和分析后的文档列表
-*  {object} config 配置@标记后的输出规则,包含两个参数key和val,当时字符串时自动替换{key}和{val}为文档值,是函数时将被替换为返回内容. 可参考src/config.json
+*  {object} options 配置项。配置@标记后的输出规则,包含两个参数key和val,当时字符串时自动替换{key}和{value}为文档值,是函数时将被替换为返回内容. 可参考https://github.com/laomu1988/lazy-doc/blob/master/src/template.ts
 
 **install**
 
@@ -24,14 +22,13 @@ var doc = require('lazy-doc');
 doc(folder, output, config);
 ```
 
-
 **示例:**
 
 ```
 var doc = require('lazy-doc');
 doc(__dirname + '/src', __dirname + '/readme.md',{
-     default: '### {key}\n{val}', // 修改默认规则
-     source: '### 源代码地址: {val}'  // 自己制定规则
+     default: '### {key}\n{value}', // 修改默认规则
+     source: '### 源代码地址: {value}'  // 自己制定规则
 });
 ```
 
@@ -39,10 +36,11 @@ doc(__dirname + '/src', __dirname + '/readme.md',{
 
 * [ ] 生成数据数组
 * [ ] Markdown内部配置后自更新
-* [ ] 函数参数改为表格输出
+* [ ] 函数参数改为表格输出 
+
 # 更新记录
 
-* [修改记录](https://github.com/laomu1988/lazy-doc/blob/master/package.json)
+* [修改记录](https://github.com/laomu1988/lazy-doc/blob/master/package.json) 
 
 
 ## 书写规范

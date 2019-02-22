@@ -1,14 +1,17 @@
 /**
- * # 懒人文档生成工具
+ * @file 懒人文档生成工具
  * 书写js代码,自动生成markdown文档
  * js代码格式参考test/src/index.js
- * @function lazy-doc
+ **/
+
+/**
+ * @function lazy-doc 懒人文档生成工具
  * @param {string} folder 要生成文档的代码所在文件夹
  *          例如: __dirname + '/src'
  * @param {string|Function} output
  *        当为string时，表示要写入的文件路径
  *        当为Function时，文档计算完毕后的回调,有两个参数,所有文档合并后的string和分析后的文档列表
- * @param {object} config 配置@标记后的输出规则,包含两个参数key和val,当时字符串时自动替换{key}和{val}为文档值,是函数时将被替换为返回内容. 可参考src/config.json
+ * @param {object} options 配置项。配置@标记后的输出规则,包含两个参数key和val,当时字符串时自动替换{key}和{value}为文档值,是函数时将被替换为返回内容. 可参考https://github.com/laomu1988/lazy-doc/blob/master/src/template.ts
  *
  * @install
  * npm install lazy-doc
@@ -20,8 +23,8 @@
  * @example
  * var doc = require('lazy-doc');
  * doc(__dirname + '/src', __dirname + '/readme.md',{
- *      default: '### {key}\n{val}', // 修改默认规则
- *      source: '### 源代码地址: {val}'  // 自己制定规则
+ *      default: '### {key}\n{value}', // 修改默认规则
+ *      source: '### 源代码地址: {value}'  // 自己制定规则
  * });
  *
  * @todo
@@ -36,96 +39,69 @@
 /* eslint-disable fecs-camelcase */
 import * as filter from 'filter-files';
 import * as fs from 'fs';
-import mkdir from 'mk-dir';
 import * as Path from 'path';
-import note2md from './note2md';
-import getNotes from './getNotes';
-import config from './config';
+import mkdir from 'mk-dir';
+import templates from './templates';
+import * as utils from './utils';
 
-
-module.exports = function (path, output, _config) {
+module.exports = function (path, output, options) {
     path = Path.resolve(path);
-    let stat = fs.statSync(path);
-    let files = stat.isDirectory() ? filter.sync(path) : [path];
-    let notes = [];
-    _config = Object.assign({}, config, _config);
+    let files = isDirectory(path) ? filter.sync(path) : [path];
+    let marks = [];
+    options = Object.assign({templates}, options);
     files.forEach(function (filepath) {
         try {
-            var source = fs.readFileSync(filepath, 'utf8');
-            var _notes = getNotes(source);
-            if (_notes && _notes.length > 0) {
-                _notes.forEach(function (note) {
-                    note.file = filepath;
-                    if (note.firstKey) {
-                        // console.log('isModule');
-                        var key = note.firstKey;
-                        // 从下一行中读取函数名或者类名称
-                        if (!note.firstKeyVal && note.nextLine && note.nextLine.indexOf(key) >= 0) {
-                            // console.log('reset firstKeyVal');
-                            note.firstKeyVal = note.nextLine.replace(key, '')
-                                .replace(/\Wvar\W/, '')
-                                .replace(/[\{\}]*/g, '')
-                                .replace(/\s*\=\s*/, '')
-                                .trim();
-                        }
-
-                        note._filepath = filepath;
-                        notes.push(note);
-                    }
-
-                });
-            }
-
+            let source = fs.readFileSync(filepath, 'utf8');
+            let notes = utils.getNotes(source);
+            let mark = notes.map(note => utils.getNoteMark(note, source));
+            marks.forEach(mark => mark.filepath = filepath);
+            marks = marks.concat(mark);
         }
         catch (e) {
             console.log(e);
         }
     });
-
-    notes.sort((k1: any, k2: any) =>{
-        if (k1.index !== k2.index) {
-            return k2.index - k1.index;
-        }
-
-        if (k1.firstKeyVal !== k2.firstKeyVal) {
-            return k1.firstKeyVal > k2.firstKeyVal ? 1 : -1;
-        }
-
-        return k1.note > k2.note ? 1 : -1;
-    });
-    var md = [];
-    notes.forEach(function (note) {
-        note._md = note2md(note, _config);
-        md.push(note._md);
-    });
-    var write = md.join('\n');
-    if (typeof output === 'string') {
+    marks.sort((m1, m2) => m1.index - m2.index);
+    let markdown = marks.map(mark => {
+        mark.markdown = utils.parseNoteMark(mark, options);
+        return mark.markdown;
+    }).join('\n');
+    console.log('marks', JSON.stringify(marks, null, 4));
+    
+    if (typeof output === 'string' && output) {
         output = Path.resolve(output);
-        var ext = Path.extname(output);
-        if (ext && ext.length > 1) {
-            mkdir(Path.dirname(output));
-            fs.writeFileSync(output, write, 'utf8');
+        if (!isDirectory(output)) {
+            // 写入单个文件
+            fs.writeFileSync(output, markdown, 'utf8');
         }
         else {
             // 写入文件列表
             if (path.indexOf('*') >= 0) {
                 path = Path.dirname(path.substr(0, path.indexOf('*')));
             }
-
-            for (var i = 0; i < notes.length; i++) {
-                var note = notes[i];
-                var filepath = output + '/' + note._filepath.replace(path, '');
-                var filename = Path.basename(filepath);
-                filepath = Path.resolve(Path.dirname(filepath) + '/' + filename.substr(0, filename.lastIndexOf('.')) + '.md');
+            let mds = {};
+            marks.forEach(m => {
+                mds[m.filename] = mds[m.filename] || '';
+                mds[m.filename] += m.markdown;
+            });
+            for(let filepath in mds) {
+                let markdown = mds[filepath];
+                filepath = output + '/' + filepath.replace(path, '');
+                filepath = filepath + '.md';
                 console.log('Write to File:', filepath);
                 mkdir(Path.dirname(filepath));
-                fs.writeFileSync(filepath, note._md, 'utf8');
+                fs.writeFileSync(filepath, markdown, 'utf8');
             }
         }
     }
     else if (typeof output === 'function') {
-        output(write, notes);
+        output(markdown, marks);
     }
 
-    return write;
+    return markdown;
 };
+
+function isDirectory(path) {
+    let stat = fs.statSync(path);
+    return stat.isDirectory();
+}

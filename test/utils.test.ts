@@ -7,11 +7,69 @@
 let utils = require('../src/utils');
 
 test('utils.getFunctionName', () => {
-    expect(utils.getFunctionName('function test(')).toBe('test');
-    expect(utils.getFunctionName(' function test (')).toBe('test');
-    expect(utils.getFunctionName(' test (')).toBe('test');
-    expect(utils.getFunctionName('test(')).toBe('test');
-    expect(utils.getFunctionName('test')).toBe('');
-    expect(utils.getFunctionName('')).toBe('');
-    expect(utils.getFunctionName('// test(')).toBe('');
+    let matchs = [
+        {source: `function test(`, dest: `test`},
+        {source: ` function test (`, dest: `test`},
+        {source: ` test (`, dest: `test`},
+        {source: `test(`, dest: `test`},
+        {source: `a test (`, dest: `test`},
+        {source: ``, dest: ``},
+        {source: `// test()`, dest: ``},
+    ];
+    matchs.forEach(({source, dest}) =>
+        expect(utils.getFunctionName(source)).toBe(dest)
+    )
+});
+
+let notes = [
+    {
+        source: '/**test1*/ /***/\ntest',
+        dest: 'test1',
+        len: 2,
+        nextLine: '/***/'
+    },
+    {
+        source: ` /**\n* @file 测试文件\n*/\nfunction a()`,
+        dest: `@file 测试文件`,
+        nextLine: 'function a()'
+    },
+    {
+        // 测试注释和内容分离
+        source: ` /***/\n\nfunction a()`,
+        dest: '',
+        nextLine: '',
+    },
+    {
+        source: `/***/`,
+        dest: ``,
+        nextLine: '',
+    },
+];
+test('utils.getNotes', () => {
+    notes.forEach(({source, dest, nextLine, len}) => {
+        let notes = utils.getNotes(source);
+        expect(notes[0].content).toBe(dest)
+        expect(notes[0].nextLine).toBe(nextLine)
+        if (len) {
+            expect(notes.length).toBe(len)
+        }
+    })
+});
+
+test('utils.getNoteMark', () => {
+    notes.forEach(({source, dest, nextLine, len}) => {
+        let notes = utils.getNotes(source);
+        let mark = utils.getNoteMark(notes[0]);
+        console.log('mark:', JSON.stringify(mark));
+    })
+});
+
+
+test('utils.transform', () => {
+    let source = [
+        {key: 'file', value: 'name', template: '# {value}', result: '# name'},
+    ];
+    source.forEach((s) => {
+        expect(utils.transform(s.key, s.value, s.template)).toBe(s.result);
+    })
 });
