@@ -1,17 +1,33 @@
 /**
  * @file 公共函数
  */
+
+/**
+ * 转换步骤：
+ * source源文件->note查找注释->注释中标记mark->标记转换为markdown->写入文件
+ */
+
 const debug = require('debug')('lazydoc');
 
 /**
- * 从函数列获取函数名
- * @param {string} line 函数代码
- * @return {string} 函数名称。假如不是函数定义代码格式，则返回空字符串
+ * 从代码中查找注释模块并取得`@`标记
+ * @param source 源文件
+ * @return {[Mark]} 标记列表
  */
-export function getFunctionName(line: string) {
-    let match = line.match(/^([^/]*)(function\s+)?\b(\w+)\s*\(/)
-    return match ? match[3] : '';
+export function getMarks(source) {
+    let notes = getNotes(source);
+    let marks = [];
+    notes.forEach(note => {
+        let list = getNoteMark(note, source);
+        marks = marks.concat(list);
+    });
+    let index = marks[0] ? marks[0].index || 0 : 0;
+    if (marks[0]) {
+        marks[0].index = index;
+    }
+    return marks;
 }
+
 
 /**
  * 取得代码中的块注释内容并清理掉前面的*
@@ -65,21 +81,21 @@ interface Note {
  * @return {Object} 注释解析后的标记内容
  */
 export function getNoteMark(note: Note, source: string) {
+    // @todo: 增加hook: 取得mark前处理
     let content = note.content || '';
     if (content[0] !== '@') {
         let funcName = getFunctionName(note.nextLine);
         if (funcName) {
-            content = '@function ' + funcName + ' ';
+            content = '@function ' + funcName + ' ' + content;
         }
     }
+    let ignore = false;
     let now_reach = 0;
     let noteMark = Object.assign({}, note, {
         source,
-        desc: content.substring(0, content.indexOf('@')).trim(),
         index: 0,
-        subindex: 0,
-        marks: []
     });
+    let marks = [];
     content.replace(/(^|\n)\s*@([\w\-]*)/g, (all: string, ch: string, key: string, index: number) => {
         let start = index + all.length - 1;
         let end;
@@ -93,35 +109,56 @@ export function getNoteMark(note: Note, source: string) {
             value = value.trimRight();
         }
         debug('mark:', key, value);
-        if (key === 'index' || key === 'subindex') {
-            // index和subindex是用来排序的. index全局顺序，subindex同一个文件内顺序的marks顺序
+        if (key === 'index') {
+            // index用来排序的
             noteMark[key] = parseInt(value, 10) || 0;
             return '';
         }
-        noteMark.marks.push({key: key.trim(), value: value});
+        if (key === 'ignore') {
+            ignore = true;
+            return '';
+        }
+        marks.push({
+            key: key.trim(),
+            value: value
+        });
     });
-    return noteMark;
+    if (ignore) {
+        return [];
+    }
+    return marks.map(m => Object.assign({}, m, noteMark));
 }
 
 /**
  * 将mark转换为markdown文件
- * @param 
- * @param options 配置项
+ * @param marks Mark标记列表
+ * @param config 配置项
  */
-export function parseNoteMark(noteMark: any, config) {
-    let markdowns = noteMark.marks.map((mark, index) => {
+export function parseNoteMark(marks: any, config) {
+    let markdowns = marks.map((mark, index) => {
         let template = typeof config.templates[mark.key] === 'undefined'
             ?  config.templates.default
             : config.templates[mark.key];
-        return transform(mark.key, mark.value, template, {
+        let prev = marks[index - 1];
+        let next = marks[index + 1];
+        let result = transform(mark.key, mark.value, template, {
             key: mark.key,
             value: mark.value,
             index,
-            prev: noteMark.marks[index - 1],
-            next: noteMark.marks[index + 1],
-            noteMark,
+            prev: marks[index - 1],
+            next: marks[index + 1],
+            marks,
             config
         });
+        debug('parseNoteMark:', JSON.stringify({
+            key: mark.key,
+            prev_key: prev ? prev.key : '',
+            next_key: next ? next.key : '', 
+            value: mark.value,
+            index: mark.index,
+            result
+        }));
+        return result;
     });
     return markdowns.filter(v => v).join('\n');
 }
@@ -192,4 +229,16 @@ interface Parsed {
     desc: string,
     optional: boolean,
     // default: string|undefined
+}
+
+
+/**
+ * 从函数列获取函数名
+ * @param {string} line 函数代码
+ * @return {string} 函数名称。假如不是函数定义代码格式，则返回空字符串
+ * @ignore
+ */
+export function getFunctionName(line: string) {
+    let match = line.match(/^([^/]*)(function\s+)?\b(\w+)\s*\(/)
+    return match ? match[3] : '';
 }

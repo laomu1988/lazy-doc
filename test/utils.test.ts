@@ -56,13 +56,12 @@ test('utils.getNotes', () => {
     })
 });
 
-test('utils.getNoteMark', () => {
-    notes.forEach(({source, dest, nextLine, len}) => {
-        let notes = utils.getNotes(source);
-        let mark = utils.getNoteMark(notes[0]);
-        console.log('mark:', JSON.stringify(mark));
-    })
-});
+// test('utils.getNoteMark', () => {
+//     notes.forEach(({source, dest, nextLine, len}) => {
+//         let notes = utils.getNotes(source);
+//         let mark = utils.getNoteMark(notes[0]);
+//     })
+// });
 
 
 test('utils.transform', () => {

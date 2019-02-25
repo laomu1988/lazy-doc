@@ -29,14 +29,13 @@
  **/
 
 /* eslint-disable fecs-camelcase */
-import * as debug from 'debug';
 import * as filter from 'filter-files';
 import * as fs from 'fs';
 import * as Path from 'path';
 import mkdir from 'mk-dir';
 import templates from './templates';
 import * as utils from './utils';
-const log = debug('lazydoc');
+const debug = require('debug')('lazydoc');
 
 export default function doc(path, output: string|Function = '', options = null) {
     path = Path.resolve(path);
@@ -50,30 +49,37 @@ export default function doc(path, output: string|Function = '', options = null) 
             if (ext.toLowerCase() === '.md') {
                 return Markdown(source, filepath);
             }
-            let notes = utils.getNotes(source);
-            let mark = notes.map(note => utils.getNoteMark(note, source));
-            marks.forEach(mark => mark.filepath = filepath);
-            marks = marks.concat(mark);
+            let list = utils.getMarks(source);
+            marks = marks.concat({
+                filepath,
+                list,
+                index: list[0] ? list[0].index || 0 : 0
+            });
         }
         catch (e) {
             console.error('LazyDocError', e);
         }
     });
     marks.sort((m1, m2) => m1.index - m2.index);
-    let markdown = marks.map(mark => {
-        mark.markdown = utils.parseNoteMark(mark, options);
-        log('mark2markdown:', {
-            key: mark.key,
-            value: mark.value,
-            markdown: mark.markdown
+    let markdown = marks.map(one => {
+        one.markdown = utils.parseNoteMark(one.list, options);
+        debug('mark2markdown:', {
+            filepath: one.filepath,
+            markdown: one.markdown,
+            list: one.list.map(v => {
+                return {
+                    key: v.key, value: v.value
+                }
+            })
         });
-        return mark.markdown;
+        return one.markdown;
     }).filter(m => m).join('\n');
     
     if (typeof output === 'string' && output) {
         output = Path.resolve(output);
         if (!isDirectory(output)) {
             // 写入单个文件
+            mkdir(Path.dirname(output));
             fs.writeFileSync(output, markdown, 'utf8');
         }
         else {
@@ -83,12 +89,13 @@ export default function doc(path, output: string|Function = '', options = null) 
             }
             let mds = {};
             marks.forEach(m => {
-                mds[m.filename] = mds[m.filename] || '';
-                mds[m.filename] += m.markdown;
+                mds[m.filepath] = mds[m.filepath] || '';
+                mds[m.filepath] += m.markdown;
             });
+            debug('mds:', mds);
             for(let filepath in mds) {
                 let markdown = mds[filepath];
-                filepath = output + '/' + filepath.replace(path, '');
+                filepath = (output + '/' + filepath.replace(path, '')).replace('//', '/');
                 filepath = filepath + '.md';
                 console.log('Write to File:', filepath);
                 mkdir(Path.dirname(filepath));
@@ -104,8 +111,11 @@ export default function doc(path, output: string|Function = '', options = null) 
 };
 
 function isDirectory(path) {
-    let stat = fs.statSync(path);
-    return stat.isDirectory();
+    let parsed = Path.parse(path);
+    if (parsed.ext.length >= 1) {
+        return false;
+    }
+    return true;
 }
 
 // markdown文件处理
@@ -120,7 +130,7 @@ export function Markdown(source, filepath) {
     });
     if (filepath) {
         console.log('update', filepath);
-        log('update-result', {filepath, result});
+        debug('update-result', {filepath, result});
         fs.writeFileSync(filepath, result, 'utf8');
     }
     return result;

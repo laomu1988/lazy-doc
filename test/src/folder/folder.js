@@ -1,4 +1,4 @@
 /**
  * 测试folder
- * @module Test
+ * @module TestFolder
  */

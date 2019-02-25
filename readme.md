@@ -44,6 +44,64 @@ lazydoc filename -o dest_filename
 
 ## 更新记录 (https://github.com/laomu1988/lazy-doc/blob/master/package.json) 
 
+## lib/utils 函数
+<!--@doc src/utils.ts-->
+
+###  getMarks 从代码中查找注释模块并取得`@`标记
+| 参数 | 说明 | 类型 |
+| --- | --- | --- |
+| source | 源文件 |  |
+
+返回值  {[Mark]} 标记列表 
+
+###  getNotes 取得代码中的块注释内容并清理掉前面的*
+| 参数 | 说明 | 类型 |
+| --- | --- | --- |
+| source | 代码内容 | string |
+
+返回值  {[Note]} 注释内容 
+
+##  {Object} Note 解析后注释内容结构
+| 属性 | 说明 | 类型 |
+| --- | --- | --- |
+| block | 注释原文 | string |
+| content | 注释内容(清理掉前面的*后剩余部分) | string |
+| position | 注释开始位置 | number |
+| nextLine | 注释结束后后面一行内容（注释结束后不是换行符，则直接取注释后内容） | string |
+
+
+###  getNoteMark 取得注释中用mark标记的代码
+| 参数 | 说明 | 类型 |
+| --- | --- | --- |
+| note |  | Object |
+| source |  | string |
+
+返回值  {Object} 注释解析后的标记内容 
+
+###  parseNoteMark 将mark转换为markdown文件
+| 参数 | 说明 | 类型 |
+| --- | --- | --- |
+| marks | Mark标记列表 |  |
+| config | 配置项 |  |
+
+
+###  parseParam 解析参数含义
+| 参数 | 说明 | 类型 |
+| --- | --- | --- |
+| value | 要转换的参数解释内容 | string |
+
+返回值  {Parsed} 解析后的参数 
+
+##  {Object} Parsed 参数解析后数据对象
+| 属性 | 说明 | 类型 |
+| --- | --- | --- |
+| type | 参数数据类型 | string |
+| name | 参数名称 | string |
+| desc | 参数说明 | string |
+| optional | 是否必填 | boolean |
+
+<!--@end-->
+
 ## 书写规范
 * 注释以`/**`开头,并以`*/`结尾.并且其中包含以@开头的说明
 * @标记只能出现在行的开头(之前可以加一个*),行中间的@标记将不被作为格式标记处理

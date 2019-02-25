@@ -10,10 +10,10 @@
     "release2": "standard-version --release-as minor",
     "release1": "standard-version --release-as major",
     "release": "standard-version",
-    "doc:debug": "npm run build && cross-env DEBUG=* node bin/lazydoc.js ./readme.md",
+    "doc:debug": "npm run build && cross-env DEBUG=lazydoc node bin/lazydoc.js ./readme.md",
     "doc": "npm run build && node bin/lazydoc.js ./readme.md",
-    "test:debug": "cross-env DEBUG=* && jest",
-    "test": "jest"
+    "test:debug": "rimraf test/output && cross-env DEBUG=lazydoc jest",
+    "test": "rimraf test/output && jest"
   },
   "bin": {
     "lazydoc": "./bin/lazydoc.js"
@@ -62,8 +62,10 @@
     "@commitlint/config-conventional": "^7.1.2",
     "babel-jest": "^24.1.0",
     "cross-env": "^5.2.0",
+    "glob": "^7.1.3",
     "husky": "^1.3.1",
     "jest": "^24.1.0",
+    "rimraf": "^2.6.3",
     "standard-version": "^5.0.0"
   }
 }
