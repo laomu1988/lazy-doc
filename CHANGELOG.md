@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.2.1](https://github.com/laomu1988/lazy-doc/compare/v0.2.0...v0.2.1) (2019-02-25)
+
+
+### Bug Fixes
+
+* 删除多余空行 ([9474504](https://github.com/laomu1988/lazy-doc/commit/9474504))
+* 测试程序完善; 修复输出到文件夹；避免分隔同一个文件内标记 ([f1736b9](https://github.com/laomu1988/lazy-doc/commit/f1736b9))
+
+
+
+# Change Log
+
+All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
+
 # [0.2.0](https://github.com/laomu1988/lazy-doc/compare/v0.1.8...v0.2.0) (2019-02-22)
 
 
