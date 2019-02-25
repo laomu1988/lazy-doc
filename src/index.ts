@@ -38,16 +38,19 @@ import * as utils from './utils';
 const debug = require('debug')('lazydoc');
 
 export default function doc(path, output: string|Function = '', options = null) {
+    if (!path) {
+        throw new Error('lazy-doc(path, output, options) path need to be string.');
+    }
     path = Path.resolve(path);
     let files = isDirectory(path) ? filter.sync(path) : [path];
     let marks = [];
-    options = Object.assign({templates}, options);
+    options = getOptions(options);
     files.forEach(function (filepath) {
         try {
             let source = fs.readFileSync(filepath, 'utf8');
             let ext = Path.extname(filepath);
             if (ext.toLowerCase() === '.md') {
-                return Markdown(source, filepath);
+                return Markdown(source, filepath, options);
             }
             let list = utils.getMarks(source);
             marks = marks.concat({
@@ -110,6 +113,14 @@ export default function doc(path, output: string|Function = '', options = null) 
     return markdown;
 };
 
+
+function getOptions(options = null) {
+    options = Object.assign({}, options);
+    options.templates = Object.assign({}, templates, options.templates);
+    console.log('templates:', options.templates);
+    return options;
+}
+
 function isDirectory(path) {
     let parsed = Path.parse(path);
     if (parsed.ext.length >= 1) {
@@ -119,11 +130,11 @@ function isDirectory(path) {
 }
 
 // markdown文件处理
-export function Markdown(source, filepath) {
+export function Markdown(source, filepath, options) {
     console.log('markdown:', filepath);
     let result = source.replace(/(<!--+@doc\s([\w.\/]+)--+>)[\s\S]*?(<!--+@end--+>)/g, function(all, pre, path) {
         path = Path.dirname(filepath) + '/' + path;
-        let md = doc(path);
+        let md = doc(path, '', options);
         console.log('file in markdown:', path);
         // console.log('source:', {path, pre, md});
         return pre + '\n' + md + '\n<!--@end-->';

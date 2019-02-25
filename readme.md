@@ -37,8 +37,10 @@ doc(__dirname + '/src', __dirname + '/readme.md',{
 ## 命令行工具使用
 ```sh
 # 需要先全局安装lazy-doc，`npm install -g lazy-doc`
+lazydoc <path|folder> -o dest_file --config config_path
 lazydoc readme.md
 lazydoc filename -o dest_filename
+lazydoc folder --config doc.config.js
 ```
 <!--@end-->
 
