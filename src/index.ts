@@ -29,12 +29,14 @@
  **/
 
 /* eslint-disable fecs-camelcase */
+import * as debug from 'debug';
 import * as filter from 'filter-files';
 import * as fs from 'fs';
 import * as Path from 'path';
 import mkdir from 'mk-dir';
 import templates from './templates';
 import * as utils from './utils';
+const log = debug('lazydoc');
 
 export default function doc(path, output: string|Function = '', options = null) {
     path = Path.resolve(path);
@@ -60,8 +62,13 @@ export default function doc(path, output: string|Function = '', options = null) 
     marks.sort((m1, m2) => m1.index - m2.index);
     let markdown = marks.map(mark => {
         mark.markdown = utils.parseNoteMark(mark, options);
+        log('mark2markdown:', {
+            key: mark.key,
+            value: mark.value,
+            markdown: mark.markdown
+        });
         return mark.markdown;
-    }).join('\n');
+    }).filter(m => m).join('\n');
     
     if (typeof output === 'string' && output) {
         output = Path.resolve(output);
@@ -113,6 +120,7 @@ export function Markdown(source, filepath) {
     });
     if (filepath) {
         console.log('update', filepath);
+        log('update-result', {filepath, result});
         fs.writeFileSync(filepath, result, 'utf8');
     }
     return result;

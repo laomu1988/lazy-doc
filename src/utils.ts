@@ -1,6 +1,7 @@
 /**
  * @file 公共函数
  */
+const debug = require('debug')('lazydoc');
 
 /**
  * 从函数列获取函数名
@@ -75,9 +76,8 @@ export function getNoteMark(note: Note, source: string) {
     let noteMark = Object.assign({}, note, {
         source,
         desc: content.substring(0, content.indexOf('@')).trim(),
-        firstKey: '',
-        firstValue: '',
         index: 0,
+        subindex: 0,
         marks: []
     });
     content.replace(/(^|\n)\s*@([\w\-]*)/g, (all: string, ch: string, key: string, index: number) => {
@@ -92,31 +92,13 @@ export function getNoteMark(note: Note, source: string) {
         if (value) {
             value = value.trimRight();
         }
-
-        // console.log('key:', key, value, '\n---------');
-
-        if (key === 'index') {
-            // index 是用来排序的
-            noteMark.index = parseInt(value, 10) || 0;
+        debug('mark:', key, value);
+        if (key === 'index' || key === 'subindex') {
+            // index和subindex是用来排序的. index全局顺序，subindex同一个文件内顺序的marks顺序
+            noteMark[key] = parseInt(value, 10) || 0;
             return '';
         }
-
-        let isFirst = false;
-        if (!noteMark.firstKey) {
-            noteMark.firstKey = key.trim();
-            if (value && value.length > 0) {
-                noteMark.firstValue = value;
-            }
-            isFirst = true;
-        }
-
         noteMark.marks.push({key: key.trim(), value: value});
-        if (isFirst && index > 0) {
-            let desc = content.substr(0, index).trimRight();
-            if (desc) {
-                noteMark.marks.push({key: 'desc', value: desc});
-            }
-        }
     });
     return noteMark;
 }
@@ -139,9 +121,9 @@ export function parseNoteMark(noteMark: any, config) {
             next: noteMark.marks[index + 1],
             noteMark,
             config
-        }) + '\n';
+        });
     });
-    return markdowns.join('');
+    return markdowns.filter(v => v).join('\n');
 }
 
 export function transform(key: string, value: string, template: string | Function, options: any) {

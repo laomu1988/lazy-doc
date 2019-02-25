@@ -4,8 +4,6 @@
 
 <!--@doc src/index.ts-->
 
-
-
 ###  lazy-doc 懒人文档生成工具
 | 参数 | 说明 | 类型 |
 | --- | --- | --- |
@@ -34,19 +32,14 @@ doc(__dirname + '/src', __dirname + '/readme.md',{
 });
 ```
 
-
 <!--@end-->
 <!--@doc bin/lazydoc.js-->
-
-
-
 ## 命令行工具使用
 ```sh
 # 需要先全局安装lazy-doc，`npm install -g lazy-doc`
 lazydoc readme.md
 lazydoc filename -o dest_filename
 ```
-
 <!--@end-->
 
 ## 更新记录 (https://github.com/laomu1988/lazy-doc/blob/master/package.json) 
