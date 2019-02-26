@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.2.2](https://github.com/laomu1988/lazy-doc/compare/v0.2.1...v0.2.2) (2019-02-26)
+
+
+### Features
+
+* 命令行增加读取配置项文件配置 ([bbf3030](https://github.com/laomu1988/lazy-doc/commit/bbf3030))
+* 文件路径可按照glob规则匹配；增加文件扩展名过滤配置项 ([2a66cf6](https://github.com/laomu1988/lazy-doc/commit/2a66cf6))
+
+
+
+# Change Log
+
+All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
+
 ## [0.2.1](https://github.com/laomu1988/lazy-doc/compare/v0.2.0...v0.2.1) (2019-02-25)
 
 
