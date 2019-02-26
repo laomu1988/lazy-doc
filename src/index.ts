@@ -148,9 +148,14 @@ export function Markdown(source, filepath, options) {
         return pre + '\n' + md + '\n<!--@end-->';
     });
     if (filepath) {
-        console.log('update', filepath);
-        debug('update-result', {filepath, result});
-        fs.writeFileSync(filepath, result, 'utf8');
+        if (source === result) {
+            console.log('file-no-change', filepath);
+        }
+        else {
+            console.log('update', filepath);
+            debug('update-result', {filepath, result});
+            fs.writeFileSync(filepath, result, 'utf8');
+        }
     }
     return result;
 }
