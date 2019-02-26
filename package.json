@@ -1,6 +1,6 @@
 {
   "name": "lazy-doc",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "description": "懒人文档生成工具,js代码自动生成文档",
   "main": "lib/index.js",
   "scripts": {
