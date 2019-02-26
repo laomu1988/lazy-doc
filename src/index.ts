@@ -32,24 +32,30 @@
 import * as filter from 'filter-files';
 import * as fs from 'fs';
 import * as Path from 'path';
-import mkdir from 'mk-dir';
-import templates from './templates';
+import * as glob from 'glob';
+import * as defaultConfig from './config';
 import * as utils from './utils';
+const mkdir = require('mk-dir');
 const debug = require('debug')('lazydoc');
 
 export default function doc(path, output: string|Function = '', options = null) {
     if (!path) {
         throw new Error('lazy-doc(path, output, options) path need to be string.');
     }
-    path = Path.resolve(path);
-    let files = isDirectory(path) ? filter.sync(path) : [path];
+    path = Path.resolve(process.cwd(), path);
+    let files = isGlob(path) ? glob.sync(path) : (isDirectory(path) ? filter.sync(path) : [path]);
     let marks = [];
     options = getOptions(options);
+    console.log('files:', path, files);
     files.forEach(function (filepath) {
         try {
+            let ext = Path.extname(filepath).toLowerCase();
+            // 忽略部分文件扩展名            
+            if (options.ignoreExt && options.ignoreExt.indexOf(ext) >= 0) {
+                return;
+            }
             let source = fs.readFileSync(filepath, 'utf8');
-            let ext = Path.extname(filepath);
-            if (ext.toLowerCase() === '.md') {
+            if (ext === '.md') {
                 return Markdown(source, filepath, options);
             }
             let list = utils.getMarks(source);
@@ -113,11 +119,13 @@ export default function doc(path, output: string|Function = '', options = null) 
     return markdown;
 };
 
+function isGlob(path = '') {
+    return !!path.match(/[*?[\]!|()]/)
+}
 
 function getOptions(options = null) {
-    options = Object.assign({}, options);
-    options.templates = Object.assign({}, templates, options.templates);
-    console.log('templates:', options.templates);
+    options = Object.assign({}, defaultConfig, options);
+    options.templates = Object.assign({}, defaultConfig.templates, options.templates);
     return options;
 }
 

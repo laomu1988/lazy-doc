@@ -40,7 +40,10 @@ doc(__dirname + '/src', __dirname + '/readme.md',{
 lazydoc <path|folder> -o dest_file --config config_path
 lazydoc readme.md
 lazydoc filename -o dest_filename
+# 使用文件夹和配置项
 lazydoc folder --config doc.config.js
+# 使用glob规则匹配文件
+lazydoc "src/*.{ts|js}" -o test.md
 ```
 <!--@end-->
 

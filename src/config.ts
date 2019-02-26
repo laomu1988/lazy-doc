@@ -3,7 +3,15 @@
  * */
 import * as utils from './utils';
 
-export default {
+// 忽略的文件扩展名
+export const ignoreExt = [
+    '.bmp',
+    '.jpg',
+    '.gif',
+    '.png'
+]
+
+export const templates = {
     'default': function (key, value = '') {
         var trim = (value + '').trim();
         if (trim) {

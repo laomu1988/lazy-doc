@@ -12,7 +12,10 @@
  * lazydoc <path|folder> -o dest_file --config config_path
  * lazydoc readme.md
  * lazydoc filename -o dest_filename
+ * # 使用文件夹和配置项
  * lazydoc folder --config doc.config.js
+ * # 使用glob规则匹配文件
+ * lazydoc "src/*.{ts|js}" -o test.md
  * ```
  */
 const Path = require('path');
@@ -36,7 +39,11 @@ program
         if (typeof path !== 'string') {
             throw new Error('"lazydoc <path>" path need to be string');
         }
-        doc(path, options.output, Object.assign({}, config, {output: options.output}));
+        if (options.output) {
+            console.log('output_path', options.output);
+        }
+        console.log('doc:', {path, output: options.output, config});
+        doc(path, options.output || '', config);
         console.log('finish lazy-doc:', path);
     });
 
