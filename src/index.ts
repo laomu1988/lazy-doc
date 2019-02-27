@@ -46,7 +46,7 @@ export default function doc(path, output: string|Function = '', options = null) 
     let files = isGlob(path) ? glob.sync(path) : (isDirectory(path) ? filter.sync(path) : [path]);
     let marks = [];
     options = getOptions(options);
-    console.log('files:', path, files);
+    // console.log('files:', path, files);
     files.forEach(function (filepath) {
         try {
             let ext = Path.extname(filepath).toLowerCase();
@@ -88,8 +88,7 @@ export default function doc(path, output: string|Function = '', options = null) 
         output = Path.resolve(output);
         if (!isDirectory(output)) {
             // 写入单个文件
-            mkdir(Path.dirname(output));
-            fs.writeFileSync(output, markdown, 'utf8');
+            write({filepath: output, origin: undefined, content: markdown}, options);
         }
         else {
             // 写入文件列表
@@ -101,14 +100,11 @@ export default function doc(path, output: string|Function = '', options = null) 
                 mds[m.filepath] = mds[m.filepath] || '';
                 mds[m.filepath] += m.markdown;
             });
-            debug('mds:', mds);
             for(let filepath in mds) {
                 let markdown = mds[filepath];
                 filepath = (output + '/' + filepath.replace(path, '')).replace('//', '/');
                 filepath = filepath + '.md';
-                console.log('Write to File:', filepath);
-                mkdir(Path.dirname(filepath));
-                fs.writeFileSync(filepath, markdown, 'utf8');
+                write({filepath, origin: undefined, content: markdown}, options);
             }
         }
     }
@@ -148,16 +144,19 @@ export function Markdown(source, filepath, options) {
         return pre + '\n' + md + '\n<!--@end-->';
     });
     if (filepath) {
-        if (source === result) {
-            console.log('file-no-change', filepath);
-        }
-        else {
-            console.log('update', filepath);
-            debug('update-result', {filepath, result});
-            fs.writeFileSync(filepath, result, 'utf8');
-        }
+        write({filepath, origin: source, content: result}, options);
     }
     return result;
+}
+
+function write(ctx: any, options) {
+    if (typeof options.beforeWrite === 'function') {
+        options.beforeWrite(ctx);
+    }
+    if (ctx.filepath && ctx.content !== ctx.origin) {
+        mkdir(Path.dirname(ctx.filepath));
+        fs.writeFileSync(ctx.filepath, ctx.content, 'utf8');
+    }
 }
 
 module.exports = doc;

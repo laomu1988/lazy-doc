@@ -47,6 +47,30 @@ lazydoc "src/*.{ts|js}" -o test.md
 ```
 <!--@end-->
 
+<!--@doc src/config.ts-->
+
+## 配置项说明
+
+### ignoreExt 忽略的文件扩展名,数组格式
+默认为['.bmp', '.jpg', '.gif', '.png']
+
+### templates 模板配置
+例如
+```
+{
+   'class': '\n# 类 {value.trim()}',
+}
+```
+
+###  beforeWrite 写入文件前调用
+| 参数 | 说明 | 类型 |
+| --- | --- | --- |
+| ctx | 写入文件信息 | Object |
+| ctx | .filepath 要写入的路径 | string |
+| ctx | .content 文件内容 | string |
+
+<!--@end-->
+
 ## 更新记录 (https://github.com/laomu1988/lazy-doc/blob/master/package.json) 
 
 ## lib/utils 函数

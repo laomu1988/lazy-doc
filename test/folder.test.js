@@ -14,7 +14,7 @@ const dests = glob.sync(__dirname + '/dest/*.*')
         __dirname + '/output/' + filepath
     ]);
 
-console.log('dests', dests);
+// console.log('dests', dests);
 test.each(dests)('parse %s', (filepath, dest, output) => {
     if (!fs.existsSync(output)) {
         throw new Error(output + ' do not exist');

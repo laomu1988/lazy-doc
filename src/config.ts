@@ -1,9 +1,13 @@
 /**
  * @file 注释及生成内容配置项
+ * @h2 配置项说明
  * */
 import * as utils from './utils';
 
-// 忽略的文件扩展名
+/**
+ * @h3 ignoreExt 忽略的文件扩展名,数组格式
+ * 默认为['.bmp', '.jpg', '.gif', '.png']
+ **/
 export const ignoreExt = [
     '.bmp',
     '.jpg',
@@ -11,6 +15,15 @@ export const ignoreExt = [
     '.png'
 ]
 
+/**
+ * @h3 templates 模板配置
+ * 例如
+ * ```
+ * {
+ *    'class': '\n# 类 {value.trim()}',
+ * }
+ * ```
+ */
 export const templates = {
     'default': function (key, value = '') {
         var trim = (value + '').trim();
@@ -21,6 +34,10 @@ export const templates = {
             return '\n**' + key + '**';
         }
     }, // 默认规则
+    'h1': '\n# {value.trim()}',
+    'h2': '\n## {value.trim()}',
+    'h3': '\n### {value.trim()}',
+    'h4': '\n#### {value.trim()}',
     'constructs': '\n# {value}',
     'namespace': '\n# {value}',
     'class': '\n# 类 {value}',
@@ -72,4 +89,15 @@ function tableParams(key: string, value: string, options: any, typeName = '参�
         result += '\n'
     }
     return result;
+}
+
+
+/**
+ * 写入文件前调用
+ * @param {Object} ctx 写入文件信息
+ * @param {string} ctx.filepath 要写入的路径
+ * @param {string} ctx.content 文件内容
+ */
+export function beforeWrite(ctx: {filepath: string, content: string}){
+    console.log('write file:', ctx.filepath);
 }
