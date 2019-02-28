@@ -2,6 +2,24 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.2.5](https://github.com/laomu1988/lazy-doc/compare/v0.2.4...v0.2.5) (2019-02-28)
+
+
+### Bug Fixes
+
+* 复杂函数参数类型解析错误修复；注释前带空格修复 ([576c81b](https://github.com/laomu1988/lazy-doc/commit/576c81b))
+
+
+### Features
+
+* 增加转换前处理配置(beforeParse) ([3e64bae](https://github.com/laomu1988/lazy-doc/commit/3e64bae))
+
+
+
+# Change Log
+
+All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
+
 ## [0.2.4](https://github.com/laomu1988/lazy-doc/compare/v0.2.3...v0.2.4) (2019-02-27)
 
 
