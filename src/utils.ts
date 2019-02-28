@@ -40,7 +40,7 @@ export function getNotes(source: string) {
     }
     let list = [];
     source.replace(/\/\*\*([\w\W]*?)\*\/[ \f\r\t\v]*/g, function (block: string, content: string, start) {
-        content = content.replace(/\n ?\* ?/g, '\n').trim();
+        content = content.replace(/\n[ ]*\* ?/g, '\n').trim();
         let endPosition = start + block.length;
         let nextBrPosition = source.indexOf('\n', endPosition + 1);
         let nextLine = nextBrPosition >= 0
@@ -202,18 +202,44 @@ export function code2md(source, config) {
  * @return {Parsed} 解析后的参数
  */
 export function parseParam(value: String): Parsed {
-    let matches = value.match(/\s*({[\w|\s]*?})?\s*(\[?\s*\b\w+\b\s*\]?)\s?([\s\S]*)/);
+    value = value.trim();
+    let type = '';
+    if (value[0] === '{') {
+        type = getPrarmType(value)
+        value = value.substring(type.length + 1).trim();
+    }
+    let matches = value.match(/(\[?\s*\b\w+\b\s*\]?)\s?([\s\S]*)/);
     if (!matches) {
         return null;
     }
-    let name = matches[2] || '';
+    let name = matches[1] || '';
     return {
-        type: (matches[1] || '').replace(/[{}]/g, ''),
+        type,
         name: name.replace(/[\[\]]/g, '').trim(),
         optional: (name).indexOf('[') >= 0,
-        desc: matches[3],
+        desc: (matches[2] || '').trim(),
         // default: default
     }
+}
+
+function getPrarmType(value: String) {
+    let bracesNumber = 0; // 左大括号个数，会被右侧大括号消灭
+    let flag = 0;
+    for(let i = 0; i < value.length; i++) {
+        flag = i;
+        switch(value[i]) {
+            case '{':
+                bracesNumber += 1;
+                break;
+            case '}':
+                bracesNumber -= 1;
+                break;
+        }
+        if (bracesNumber === 0) {
+            break;
+        }
+    }
+    return value.substring(1, flag);
 }
 
 /**

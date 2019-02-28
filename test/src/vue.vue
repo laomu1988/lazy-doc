@@ -17,7 +17,9 @@ export default {
         prop1: String,
         /**@property prop2 属性2 */
         prop2: Number,
-        /**@property prop3 属性3 */
+        /**
+         * @property prop3 属性3
+         **/
         prop3: {
             type: Number | String,
             default: 'test'

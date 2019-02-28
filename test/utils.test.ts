@@ -80,6 +80,11 @@ let source = [
         {type: 'string', name: 'test', desc: '测试参数', optional: false}
     ],
     [
+        '复杂参数类型',
+        '{Function(row, {test})} [test] 测试参数',
+        {type: 'Function(row, {test})', name: 'test', desc: '测试参数', optional: true},
+    ],
+    [
         '可选参数',
         '{string} [test] 测试参数',
         {type: 'string', name: 'test', desc: '测试参数', optional: true},
