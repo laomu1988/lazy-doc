@@ -91,6 +91,14 @@ function tableParams(key: string, value: string, options: any, typeName = '参�
     return result;
 }
 
+/**
+ * 转换文件前触发
+ * @param {Object} ctx 写入文件信息
+ * @param {string} ctx.filepath 要转换的文件的路径
+ * @param {string} ctx.origin 文件内容
+ */
+export function beforeParse(ctx: {filepath: string, origin: string}){
+}
 
 /**
  * 写入文件前调用

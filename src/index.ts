@@ -58,7 +58,11 @@ export default function doc(path, output: string|Function = '', options = null) 
             if (ext === '.md') {
                 return Markdown(source, filepath, options);
             }
-            let list = utils.getMarks(source);
+            let doc = {filepath, origin: source};
+            if (typeof options.beforeParse === 'function') {
+                options.beforeParse(doc);
+            }
+            let list = utils.getMarks(doc.origin);
             marks = marks.concat({
                 filepath,
                 list,
