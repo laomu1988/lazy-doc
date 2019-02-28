@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.2.6](https://github.com/laomu1988/lazy-doc/compare/v0.2.5...v0.2.6) (2019-02-28)
+
+
+### Bug Fixes
+
+* 0.2.5需重新发布 ([27118a6](https://github.com/laomu1988/lazy-doc/commit/27118a6))
+
+
+
+# Change Log
+
+All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
+
 ## [0.2.5](https://github.com/laomu1988/lazy-doc/compare/v0.2.4...v0.2.5) (2019-02-28)
 
 
