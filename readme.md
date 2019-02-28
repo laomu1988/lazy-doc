@@ -62,6 +62,14 @@ lazydoc "src/*.{ts|js}" -o test.md
 }
 ```
 
+###  beforeParse 转换文件前触发
+| 参数 | 说明 | 类型 |
+| --- | --- | --- |
+| ctx | 写入文件信息 | Object |
+| ctx | .filepath 要转换的文件的路径 | string |
+| ctx | .origin 文件内容 | string |
+
+
 ###  beforeWrite 写入文件前调用
 | 参数 | 说明 | 类型 |
 | --- | --- | --- |
