@@ -77,23 +77,23 @@ let source = [
     [
         '普通参数',
         '{string} test 测试参数',
-        {type: 'string', name: 'test', desc: '测试参数', optional: false}
+        {type: 'string', name: 'test', desc: '测试参数', optional: false, default: ''}
     ],
     [
         '复杂参数类型',
         '{Function(row, {test})} [test] 测试参数',
-        {type: 'Function(row, {test})', name: 'test', desc: '测试参数', optional: true},
+        {type: 'Function(row, {test})', name: 'test', desc: '测试参数', optional: true, default: ''},
     ],
     [
         '可选参数',
         '{string} [test] 测试参数',
-        {type: 'string', name: 'test', desc: '测试参数', optional: true},
+        {type: 'string', name: 'test', desc: '测试参数', optional: true, default: ''},
     ],
-    // [
-    //     '默认值',
-    //     '{string} [test=abc dd] 测试参数',
-    //     {type: 'string', name: 'test', desc: '测试参数', optional: true, default: 'abc dd'},
-    // ],
+    [
+        '默认值',
+        '{string} [test=abc dd] 测试参数',
+        {type: 'string', name: 'test', desc: '测试参数', optional: true, default: 'abc dd'},
+    ],
 ];
 test.each(source)('utils.parseParam %s', (name, str, result) => {
     expect(utils.parseParam(str)).toEqual(result);

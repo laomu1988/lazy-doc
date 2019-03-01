@@ -202,37 +202,49 @@ export function code2md(source, config) {
  * @param {string} value 要转换的参数解释内容
  * @return {Parsed} 解析后的参数
  */
-export function parseParam(value: String): Parsed {
+export function parseParam(value: string): Parsed {
     value = value.trim();
     let type = '';
+    let name = '';
+    let optional = false;
+    let def = '';
     if (value[0] === '{') {
-        type = getPrarmType(value)
-        value = value.substring(type.length + 1).trim();
+        type = getBracketString(value)
+        value = value.substring(type.length + 2).trim();
     }
-    let matches = value.match(/(\[?\s*\b\w+\b\s*\]?)\s?([\s\S]*)/);
-    if (!matches) {
-        return null;
+    if (value[0] === '[') {
+        name = getBracketString(value, '[', ']') || value;
+        optional = true;
+        value = value.substring(name.length + 2).trim();
     }
-    let name = matches[1] || '';
+    else {
+        name = value.substring(0, value.indexOf(' ')) || value;
+        value = value.substring(name.length + 1).trim();
+    }
+    if (name.indexOf('=') > 0) {
+        let pos = name.indexOf('=');
+        def = name.substring(pos + 1).trim();
+        name = name.substring(0, pos);
+    }
     return {
         type,
-        name: name.replace(/[\[\]]/g, '').trim(),
-        optional: (name).indexOf('[') >= 0,
-        desc: (matches[2] || '').trim(),
-        // default: default
+        name: name,
+        optional,
+        desc: value,
+        default: def
     }
 }
 
-function getPrarmType(value: String) {
+function getBracketString(value: String, leftFlag = '{', rightFlag = '}') {
     let bracesNumber = 0; // 左大括号个数，会被右侧大括号消灭
     let flag = 0;
     for(let i = 0; i < value.length; i++) {
         flag = i;
         switch(value[i]) {
-            case '{':
+            case leftFlag:
                 bracesNumber += 1;
                 break;
-            case '}':
+            case rightFlag:
                 bracesNumber -= 1;
                 break;
         }
@@ -255,7 +267,7 @@ interface Parsed {
     name: string,
     desc: string,
     optional: boolean,
-    // default: string|undefined
+    default: string
 }
 
 

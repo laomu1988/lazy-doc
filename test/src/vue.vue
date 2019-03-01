@@ -13,7 +13,7 @@
  */
 export default {
     props: {
-        /**@property prop1 属性1 */
+        /**@property {String} [prop1=abc] 属性1 */
         prop1: String,
         /**@property prop2 属性2 */
         prop2: Number,
