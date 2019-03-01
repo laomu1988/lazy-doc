@@ -106,6 +106,7 @@ export function getNoteMark(note: Note, source: string) {
         now_reach = end > 0 ? end : content.length;
         let value = content.substring(start + 1, now_reach);
         if (value) {
+            value = value.replace(/^ */g, '');
             value = value.trimRight();
         }
         debug('mark:', key, value);
@@ -265,6 +266,6 @@ interface Parsed {
  * @ignore
  */
 export function getFunctionName(line: string) {
-    let match = line.match(/^([^/]*)(function\s+)?\b(\w+)\s*\(/)
+    let match = line.match(/^\s*(function)?( |^)([\w\$\.]+)\s*\(/)
     return match ? match[3] : '';
 }

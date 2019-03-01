@@ -27,6 +27,15 @@ export default {
     },
     data() {
         return {};
+    },
+    methods: {
+
+        /**
+         * 跳转到指定页面
+         */
+        $gotoPage() {
+
+        }
     }
 };
 </script>

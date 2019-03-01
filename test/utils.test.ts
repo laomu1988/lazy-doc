@@ -5,20 +5,20 @@
 /* global test */
 
 let utils = require('../src/utils');
-
-test('utils.getFunctionName', () => {
-    let matchs = [
-        {source: `function test(`, dest: `test`},
-        {source: ` function test (`, dest: `test`},
-        {source: ` test (`, dest: `test`},
-        {source: `test(`, dest: `test`},
-        {source: `a test (`, dest: `test`},
-        {source: ``, dest: ``},
-        {source: `// test()`, dest: ``},
-    ];
-    matchs.forEach(({source, dest}) =>
-        expect(utils.getFunctionName(source)).toBe(dest)
-    )
+let funcs = [
+    [`function test(`, `test`],
+    [` function test (`, `test`],
+    [` test (`, `test`],
+    [`test(`, `test`],
+    [`a test (`, ``],
+    [``, ``],
+    [`// test()`, ``],
+    [` $test()`, `$test`],
+    [`$test(`, `$test`],
+    [`function $test()`, `$test`],
+];
+test.each(funcs)('utils.getFunctionName %s', (source, dest) => {
+    expect(utils.getFunctionName(source)).toBe(dest);
 });
 
 let notes = [
