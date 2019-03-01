@@ -2,6 +2,24 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.2.7](https://github.com/laomu1988/lazy-doc/compare/v0.2.6...v0.2.7) (2019-03-01)
+
+
+### Bug Fixes
+
+* 函数名称带有$修复；清理多余空格 ([210787b](https://github.com/laomu1988/lazy-doc/commit/210787b))
+
+
+### Features
+
+* 函数参数增加是否必填和默认值；参数支持子对象 ([2f3b36d](https://github.com/laomu1988/lazy-doc/commit/2f3b36d))
+
+
+
+# Change Log
+
+All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
+
 ## [0.2.6](https://github.com/laomu1988/lazy-doc/compare/v0.2.5...v0.2.6) (2019-02-28)
 
 
