@@ -56,7 +56,13 @@ export default function doc(path, output: string|Function = '', options = null) 
             }
             let source = fs.readFileSync(filepath, 'utf8');
             if (ext === '.md') {
-                return Markdown(source, filepath, options);
+                marks.push({
+                    filepath,
+                    markdown: Markdown(source, filepath, options),
+                    list: [],
+                    index: 0
+                });
+                return;
             }
             let doc = {filepath, origin: source};
             if (typeof options.beforeParse === 'function') {
@@ -75,7 +81,7 @@ export default function doc(path, output: string|Function = '', options = null) 
     });
     marks.sort((m1, m2) => m1.index - m2.index);
     let markdown = marks.map(one => {
-        one.markdown = utils.parseNoteMark(one.list, options);
+        one.markdown = one.markdown || utils.parseNoteMark(one.list, options);
         debug('mark2markdown:', {
             filepath: one.filepath,
             markdown: one.markdown,
@@ -147,9 +153,6 @@ export function Markdown(source, filepath, options) {
         // console.log('source:', {path, pre, md});
         return pre + '\n' + md + '\n<!--@end-->';
     });
-    if (filepath) {
-        write({filepath, origin: source, content: result}, options);
-    }
     return result;
 }
 
