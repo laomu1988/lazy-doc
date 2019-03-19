@@ -7,6 +7,7 @@
 | param1 | 参数1 | number |  |  |
 | param2 | 参数2 | number |  |  |
 | param2.test | 子参数 | number |  |  |
+| param2.muliter | 多类型数据 | number\|Function |  |  |
 
 返回值 {string} 
 

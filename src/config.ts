@@ -84,7 +84,7 @@ function tableParams(key: string, value: string, options: any, typeName = '参�
     if (!prev || prev.key !== key) {
         result += `| ${typeName} | 说明 | 类型 | 是否必填 | 默认值 |\n| --- | --- | --- | --- | --- |\n`;
     }
-    result += `| ${parsed.name} | ${parsed.desc.replace(/\n/g, ' ')} | ${parsed.type} | ${parsed.optional ? '是' : ''} | ${parsed.default} |`;
+    result += `| ${parsed.name} | ${parsed.desc.replace(/\n/g, ' ')} | ${parsed.type.replace(/\|/g, '\\|')} | ${parsed.optional ? '是' : ''} | ${parsed.default} |`;
     if (!next || next.key !== key) {
         result += '\n'
     }

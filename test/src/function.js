@@ -9,6 +9,7 @@
  * @param {number} param1 参数1
  * @param {number} param2 参数2
  * @param {number} param2.test 子参数
+ * @param {number|Function} param2.muliter 多类型数据
  * @return {string}
  * @example 第一个示例
  * var a = add(1,2);

@@ -85,6 +85,17 @@ let source = [
         {type: 'Function(row, {test})', name: 'test', desc: '测试参数', optional: true, default: ''},
     ],
     [
+        '多个变量类型',
+        '{boolean|Function(row, instance)} [enable=true] 操作按钮是否可用，不可用时将隐藏按钮，默认true',
+        {
+            type: 'boolean|Function(row, instance)',
+            name: 'enable',
+            desc: '操作按钮是否可用，不可用时将隐藏按钮，默认true',
+            optional: true,
+            default: 'true'
+        },
+    ],
+    [
         '可选参数',
         '{string} [test] 测试参数',
         {type: 'string', name: 'test', desc: '测试参数', optional: true, default: ''},
