@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.2.9](https://github.com/laomu1988/lazy-doc/compare/v0.2.8...v0.2.9) (2019-03-19)
+
+
+### Bug Fixes
+
+* 参数多种类型时竖线和表格竖线冲突 ([e97e0e4](https://github.com/laomu1988/lazy-doc/commit/e97e0e4))
+
+
+
+# Change Log
+
+All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
+
 ## [0.2.8](https://github.com/laomu1988/lazy-doc/compare/v0.2.7...v0.2.8) (2019-03-15)
 
 
