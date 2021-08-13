@@ -10,12 +10,13 @@ let funcs = [
     [` function test (`, `test`],
     [` test (`, `test`],
     [`test(`, `test`],
-    [`a test (`, ``],
+    [`a test (`, `test`],
     [``, ``],
     [`// test()`, ``],
     [` $test()`, `$test`],
     [`$test(`, `$test`],
     [`function $test()`, `$test`],
+    [`export function $test()`, `$test`],
 ];
 test.each(funcs)('utils.getFunctionName %s', (source, dest) => {
     expect(utils.getFunctionName(source)).toBe(dest);

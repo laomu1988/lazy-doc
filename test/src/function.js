@@ -30,3 +30,18 @@ function add(param1, param2) {
 function add2(param1, param2) {
   return param1 + param2;
 }
+
+
+/**
+ * 获取元素
+ * @returns {Element}
+ */
+export default function getElement() {
+}
+
+/**
+ * testExport
+ * @returns null
+ */
+export function testExport() {
+}

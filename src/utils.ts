@@ -279,7 +279,10 @@ interface Parsed {
  * @ignore
  */
 export function getFunctionName(line: string) {
-    let match = line.match(/^\s*(function)?( |^)([\w\$\.]+)\s*\(/)
+    let match = line.match(/\s*(function)?( |^)([\w\$\.]+)\s*\(/)
+    if (match && line.substring(0, match.index).includes('//')) {
+      return '';
+    }
     return match ? match[3] : '';
 }
 

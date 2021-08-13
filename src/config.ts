@@ -59,7 +59,7 @@ export const templates = {
     'property': (key, value, options) => tableParams(key, value, options, '属性'),
     'prototype': '原型 {value} ',
     'return': '返回值 {value} ',
-    'returns': '返回列表\n{value} ',
+    'returns': '返回内容 {value} ',
     'history': '\n# 更新记录\n{value} ',
     'raw': '{value.trim()}',
     'todo': '# Todo{value} ',

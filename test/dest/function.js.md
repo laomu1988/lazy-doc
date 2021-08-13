@@ -31,3 +31,10 @@ console.log(a); // 3
 var a = add(1,2);
 console.log(a); // 3
 ```
+
+
+### `getElement()` 获取元素
+返回内容 {Element} 
+
+### `testExport()` testExport
+返回内容 null 
