@@ -294,7 +294,6 @@ export function getFunctionName(line: string) {
  */
  export function getFunctionParams(source, functionStartPosition) {
   let start = source.indexOf('(', functionStartPosition + 2);
-  console.log('getFunctionParams:', functionStartPosition, start);
   if (start > 0) {
     let end = source.indexOf(')', start);
     if (end > 0) {
