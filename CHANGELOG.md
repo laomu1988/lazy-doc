@@ -1,6 +1,23 @@
-# Change Log
+# Changelog
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
+
+### [0.2.14](https://github.com/laomu1988/lazy-doc/compare/v0.2.6...v0.2.14) (2021-08-13)
+
+
+### Features
+
+* markdown文件输出到目标位置 ([ed0bea5](https://github.com/laomu1988/lazy-doc/commit/ed0bea547ae2fa0122897ff5627e7d984e8c6987))
+* 函数参数增加是否必填和默认值；参数支持子对象 ([2f3b36d](https://github.com/laomu1988/lazy-doc/commit/2f3b36d59e0d067e123e7ab4dbe08f2c34d499b1))
+* 函数返回时携带参数 ([0ce36eb](https://github.com/laomu1988/lazy-doc/commit/0ce36eb9a2286da3e09ddd98740f5e46297bc78b))
+* 表格转换问题处理 ([bfe2e9c](https://github.com/laomu1988/lazy-doc/commit/bfe2e9c0f3b5c0733a46fa28d3817e8eca2937a3))
+
+
+### Bug Fixes
+
+* 函数名称带有$修复；清理多余空格 ([210787b](https://github.com/laomu1988/lazy-doc/commit/210787b198bfd54266c7a8ae19ab541ee9abf252))
+* 函数和参数编译优化 ([a5e1d87](https://github.com/laomu1988/lazy-doc/commit/a5e1d8728066efe1fd848edcad0fc846021cf5fa))
+* 参数多种类型时竖线和表格竖线冲突 ([e97e0e4](https://github.com/laomu1988/lazy-doc/commit/e97e0e46662011bfb759fa06e3cb9f1746f4bd4b))
 
 ## [0.2.9](https://github.com/laomu1988/lazy-doc/compare/v0.2.8...v0.2.9) (2019-03-19)
 
