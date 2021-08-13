@@ -38,12 +38,11 @@ import * as utils from './utils';
 const mkdir = require('mk-dir');
 const debug = require('debug')('lazydoc');
 
-export default function doc(path, output: string|Function = '', options = null) {
-    if (!path) {
-        throw new Error('lazy-doc(path, output, options) path need to be string.');
+export default function doc(src, output: string|Function = '', options = null) {
+    if (!src) {
+        throw new Error('lazy-doc(src, output, options) path need to be string.');
     }
-    path = Path.resolve(process.cwd(), path);
-    let files = isGlob(path) ? glob.sync(path) : (isDirectory(path) ? filter.sync(path) : [path]);
+    let files = getFiles(src);
     let marks = [];
     options = getOptions(options);
     // console.log('files:', path, files);
@@ -102,9 +101,7 @@ export default function doc(path, output: string|Function = '', options = null) 
         }
         else {
             // 写入文件列表
-            if (path.indexOf('*') >= 0) {
-                path = Path.dirname(path.substr(0, path.indexOf('*')));
-            }
+            let base = getBase(src);
             let mds = {};
             marks.forEach(m => {
                 mds[m.filepath] = mds[m.filepath] || '';
@@ -112,7 +109,7 @@ export default function doc(path, output: string|Function = '', options = null) 
             });
             for(let filepath in mds) {
                 let markdown = mds[filepath];
-                filepath = (output + '/' + filepath.replace(path, '')).replace('//', '/');
+                filepath = (output + '/' + filepath.replace(base, '')).replace('//', '/');
                 filepath = filepath + '.md';
                 write({filepath, origin: undefined, content: markdown}, options);
             }
@@ -124,6 +121,39 @@ export default function doc(path, output: string|Function = '', options = null) 
 
     return markdown;
 };
+
+// 取得文件列表
+function getFiles(src: string|string[]): string[] {
+    if (src instanceof Array) {
+        let all = [];
+        src.map(s => getFiles(s)).forEach(list => {
+            all = all.concat(list);
+        });
+        return all;
+    }
+    src = src || '';
+    if (src.indexOf(',') >= 0) {
+        return getFiles(src.split(','));
+    }
+    src = Path.resolve(process.cwd(), src);
+    return isGlob(src) ? glob.sync(src) : (isDirectory(src) ? filter.sync(src) : [src])
+}
+
+// 取得基本路径
+function getBase(src: string|string[]): string {
+    if (src instanceof Array) {
+        return getBase(src[0]);
+    }
+    src = src || '';
+    if (src.indexOf(',') >= 0) {
+        src = src.split(',')[0];
+    }
+    if (src.indexOf('*') >= 0) {
+        return Path.dirname(src.substr(0, src.indexOf('*')))
+    }
+    return src || '';
+}
+
 
 function isGlob(path = '') {
     return !!path.match(/[*?[\]!|()]/)

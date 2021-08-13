@@ -2,8 +2,6 @@
  * @file 公共函数
  */
 
-import { stat } from "fs";
-
 /**
  * 转换步骤：
  * source源文件->note查找注释->注释中标记mark->标记转换为markdown->写入文件

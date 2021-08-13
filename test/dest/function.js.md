@@ -3,10 +3,10 @@
 
 | 参数 | 说明 | 类型 | 是否必填 | 默认值 |
 | --- | --- | --- | --- | --- |
-| param1 | 参数1 | number |  |  |
-| param2 | 参数2 | number |  |  |
-| param2.test | 子参数 | number |  |  |
-| param2.muliter | 多类型数据 | number\|Function |  |  |
+| param1 | 参数1 | number | 是 |  |
+| param2 | 参数2 | number | 是 |  |
+| param2.test | 子参数 | number | 是 |  |
+| param2.muliter | 多类型数据 | number\|Function | 是 |  |
 
 返回值 {string} 
 
@@ -21,8 +21,8 @@ console.log(a); // 3
 
 | 参数 | 说明 | 类型 | 是否必填 | 默认值 |
 | --- | --- | --- | --- | --- |
-| param1 | 参数1 | number |  |  |
-| param2 | 参数2 | number |  |  |
+| param1 | 参数1 | number | 是 |  |
+| param2 | 参数2 | number | 是 |  |
 
 返回值 {string} 
 

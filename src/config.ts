@@ -84,7 +84,7 @@ function tableParams(key: string, value: string, options: any, typeName = '参�
     if (!prev || prev.key !== key) {
         result += `\n| ${typeName} | 说明 | 类型 | 是否必填 | 默认值 |\n| --- | --- | --- | --- | --- |\n`;
     }
-    result += `| ${parsed.name} | ${parsed.desc.replace(/\n/g, ' ')} | ${parsed.type.replace(/\|/g, '\\|')} | ${parsed.optional ? '是' : ''} | ${parsed.default} |`;
+    result += `| ${parseTd(parsed.name)} | ${parseTd(parsed.desc)} | ${parseTd(parsed.type)} | ${parsed.optional ? '' : '是'} | ${parseTd(parsed.default)} |`;
     if (!next || next.key !== key) {
         result += '\n'
     }
@@ -108,4 +108,9 @@ export function beforeParse(ctx: {filepath: string, origin: string}){
  */
 export function beforeWrite(ctx: {filepath: string, content: string}){
     console.log('write file:', ctx.filepath);
+}
+
+
+export function parseTd(value) {
+    return (value || '').trim().replace(/\n/g, ' ').replace(/\|/g, '\\|');
 }
