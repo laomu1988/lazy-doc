@@ -82,7 +82,7 @@ function tableParams(key: string, value: string, options: any, typeName = '参�
     let parsed = utils.parseParam(value);
     let result = '';
     if (!prev || prev.key !== key) {
-        result += `| ${typeName} | 说明 | 类型 | 是否必填 | 默认值 |\n| --- | --- | --- | --- | --- |\n`;
+        result += `\n| ${typeName} | 说明 | 类型 | 是否必填 | 默认值 |\n| --- | --- | --- | --- | --- |\n`;
     }
     result += `| ${parsed.name} | ${parsed.desc.replace(/\n/g, ' ')} | ${parsed.type.replace(/\|/g, '\\|')} | ${parsed.optional ? '是' : ''} | ${parsed.default} |`;
     if (!next || next.key !== key) {

@@ -2,6 +2,8 @@
  * @file 公共函数
  */
 
+import { stat } from "fs";
+
 /**
  * 转换步骤：
  * source源文件->note查找注释->注释中标记mark->标记转换为markdown->写入文件
@@ -86,7 +88,8 @@ export function getNoteMark(note: Note, source: string) {
     if (content[0] !== '@') {
         let funcName = getFunctionName(note.nextLine);
         if (funcName) {
-            content = '@function ' + funcName + ' ' + content;
+            const params = getFunctionParams(source, note.position + note.block.length);
+            content = '@function `' + funcName + (params)+ '` ' + content;
         }
     }
     let ignore = false;
@@ -280,4 +283,22 @@ interface Parsed {
 export function getFunctionName(line: string) {
     let match = line.match(/^\s*(function)?( |^)([\w\$\.]+)\s*\(/)
     return match ? match[3] : '';
+}
+
+/**
+ * 从函数列获取函数名
+ * @param {string} line 函数代码
+ * @return {string} 函数名称。假如不是函数定义代码格式，则返回空字符串
+ * @ignore
+ */
+ export function getFunctionParams(source, functionStartPosition) {
+  let start = source.indexOf('(', functionStartPosition + 2);
+  console.log('getFunctionParams:', functionStartPosition, start);
+  if (start > 0) {
+    let end = source.indexOf(')', start);
+    if (end > 0) {
+      return source.substring(start, end + 1).trim().replace(/\n/, ' ');
+    }
+  }
+  return '';
 }

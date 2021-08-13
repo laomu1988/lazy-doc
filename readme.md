@@ -143,3 +143,25 @@ lazydoc "src/*.{ts|js}" -o test.md
 * 注释以`/**`开头,并以`*/`结尾.并且其中包含以@开头的说明
 * @标记只能出现在行的开头(之前可以加一个*),行中间的@标记将不被作为格式标记处理
 * 一个注释内的第一个@标记后面将表示该注释模块的类型,例如 函数,模块,变量等
+
+## Todo
+* [ ] 重新梳理数据和阶段
+  - 阶段及事件
+    - 读取
+    - 转换mark(mark, {markIndex, prevMark, nextMark, fileInfo})
+    - 排序并写入文件
+  - 数据结构 []
+      - file: '' 文件路径
+      - content: '' 文件内容
+      - dest: '',  写入文件路径
+      - blocks
+        - type: 类型 code代码,note注释
+        - content: 内容
+        - position: 开始位置
+        - marks: [] 内部注释列表
+          - origin: ''
+          - name: ''
+          - position 注释在content中的位置
+          - translate: {}
+          - result
+* [ ] 使用ast转换??
