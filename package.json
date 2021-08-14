@@ -4,6 +4,7 @@
   "description": "懒人文档生成工具,js代码自动生成文档",
   "main": "lib/index.js",
   "scripts": {
+    "prepublish": "npm run build",
     "build": "tsc src/*.ts --outDir lib  --target es5",
     "release4": "npm run build && standard-version --prerelease",
     "release3": "npm run build && standard-version --release-as patch",
