@@ -3,6 +3,29 @@
  */
 
 /**
+ * @typedef {Object} Note 解析后注释内容结构
+ * @property {string} block 注释原文
+ * @property {string} content 注释内容(清理掉前面的*后剩余部分)
+ * @property {number} position 注释开始位置
+ * @property {string} nextLine 注释结束后后面一行内容（注释结束后不是换行符，则直接取注释后内容）
+ */
+export interface Note {
+  block: string,
+  content: string,
+  position: number,
+  nextLine: string,
+}
+
+export interface Mark {
+  index?: number;
+  key?: string;
+  value?: string;
+  filepath?: string;
+  markdown?: string;
+  list?: any[];
+}
+
+/**
  * 转换步骤：
  * source源文件->note查找注释->注释中标记mark->标记转换为markdown->写入文件
  */
@@ -16,7 +39,7 @@ const debug = require('debug')('lazydoc');
  */
 export function getMarks(source) {
     let notes = getNotes(source);
-    let marks = [];
+    let marks: Mark[] = [];
     notes.forEach(note => {
         let list = getNoteMark(note, source);
         marks = marks.concat(list);
@@ -34,11 +57,11 @@ export function getMarks(source) {
  * @param {string} source 代码内容
  * @return {[Note]} 注释内容
  */
-export function getNotes(source: string) {
+export function getNotes(source: string): Note[] {
+    let list: Note[] = [];
     if (!source || typeof source !== 'string') {
-        return null;
+        return list;
     }
-    let list = [];
     source.replace(/\/\*\*([\w\W]*?)\*\/[ \f\r\t\v]*/g, function (block: string, content: string, start) {
         content = content.replace(/\n[ ]*\* ?/g, '\n').trim();
         let endPosition = start + block.length;
@@ -60,19 +83,6 @@ export function getNotes(source: string) {
     return list;
 }
 
-/**
- * @typedef {Object} Note 解析后注释内容结构
- * @property {string} block 注释原文
- * @property {string} content 注释内容(清理掉前面的*后剩余部分)
- * @property {number} position 注释开始位置
- * @property {string} nextLine 注释结束后后面一行内容（注释结束后不是换行符，则直接取注释后内容）
- */
-interface Note {
-    block: string,
-    content: string,
-    position: number,
-    nextLine: string,
-}
 
 /**
  * 取得注释中用mark标记的代码
@@ -80,7 +90,7 @@ interface Note {
  * @param {string} source
  * @return {Object} 注释解析后的标记内容
  */
-export function getNoteMark(note: Note, source: string) {
+export function getNoteMark(note: Note, source: string): Mark[] {
     // @todo: 增加hook: 取得mark前处理
     let content = note.content || '';
     if (content[0] !== '@') {
@@ -96,8 +106,8 @@ export function getNoteMark(note: Note, source: string) {
         source,
         index: 0,
     });
-    let marks = [];
-    content.replace(/(^|\n)\s*@([\w\-]*)/g, (all: string, ch: string, key: string, index: number) => {
+    let marks: Mark[] = [];
+    content.replace(/(^|\n)\s*@([\w\-]*)/g, (all: string, _: string, key: string, index: number) => {
         let start = index + all.length - 1;
         let end;
         if (start < now_reach) {
@@ -124,6 +134,7 @@ export function getNoteMark(note: Note, source: string) {
             key: key.trim(),
             value: value
         });
+        return '';
     });
     if (ignore) {
         return [];

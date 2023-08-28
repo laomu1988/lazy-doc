@@ -35,16 +35,24 @@ import * as Path from 'path';
 import * as glob from 'glob';
 import * as defaultConfig from './config';
 import * as utils from './utils';
+import { Mark } from './utils';
+
 const mkdir = require('mk-dir');
 const debug = require('debug')('lazydoc');
 
-export default function doc(src, output: string|Function = '', options = null) {
+interface OptionType {
+  ignoreExt?: string;
+  templates?: any;
+  beforeParse?: any;
+}
+
+export default function doc(src, output: string|Function = '', opt?: OptionType) {
     if (!src) {
         throw new Error('lazy-doc(src, output, options) path need to be string.');
     }
     let files = getFiles(src);
-    let marks = [];
-    options = getOptions(options);
+    let marks: Mark[] = [];
+    const options = getOptions(opt);
     // console.log('files:', path, files);
     files.forEach(function (filepath) {
         try {
@@ -78,13 +86,13 @@ export default function doc(src, output: string|Function = '', options = null) {
             console.error('LazyDocError', e);
         }
     });
-    marks.sort((m1, m2) => m1.index - m2.index);
+    marks.sort((m1, m2) => (m1.index || 0) - (m2.index || 0));
     let markdown = marks.map(one => {
         one.markdown = one.markdown || utils.parseNoteMark(one.list, options);
         debug('mark2markdown:', {
             filepath: one.filepath,
             markdown: one.markdown,
-            list: one.list.map(v => {
+            list: one.list?.map(v => {
                 return {
                     key: v.key, value: v.value
                 }
@@ -102,10 +110,12 @@ export default function doc(src, output: string|Function = '', options = null) {
         else {
             // 写入文件列表
             let base = getBase(src);
-            let mds = {};
+            let mds: any = {};
             marks.forEach(m => {
-                mds[m.filepath] = mds[m.filepath] || '';
-                mds[m.filepath] += m.markdown;
+                if (m.filepath) {
+                  mds[m.filepath] = mds[m.filepath] || '';
+                  mds[m.filepath] += m.markdown;
+                }
             });
             for(let filepath in mds) {
                 let markdown = mds[filepath];
@@ -125,7 +135,7 @@ export default function doc(src, output: string|Function = '', options = null) {
 // 取得文件列表
 function getFiles(src: string|string[]): string[] {
     if (src instanceof Array) {
-        let all = [];
+        let all: string[] = [];
         src.map(s => getFiles(s)).forEach(list => {
             all = all.concat(list);
         });
@@ -159,10 +169,10 @@ function isGlob(path = '') {
     return !!path.match(/[*?[\]!|()]/)
 }
 
-function getOptions(options = null) {
-    options = Object.assign({}, defaultConfig, options);
-    options.templates = Object.assign({}, defaultConfig.templates, options.templates);
-    return options;
+function getOptions(options?: OptionType): OptionType {
+    const newOptions: any = Object.assign({}, defaultConfig, options);
+    newOptions.templates = Object.assign({}, defaultConfig.templates, newOptions.templates);
+    return newOptions;
 }
 
 function isDirectory(path) {
