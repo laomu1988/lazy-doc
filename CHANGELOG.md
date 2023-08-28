@@ -1,8 +1,18 @@
-# Changelog
+# Change Log
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
-### [0.2.16](https://github.com/laomu1988/lazy-doc/compare/v0.2.15...v0.2.16) (2021-08-14)
+<a name="0.3.0"></a>
+# [0.3.0](https://github.com/laomu1988/lazy-doc/compare/v0.2.16...v0.3.0) (2023-08-28)
+
+
+### Features
+
+* ts检查处理 ([d4aebbd](https://github.com/laomu1988/lazy-doc/commit/d4aebbd))
+
+
+
+## [0.2.16](https://github.com/laomu1988/lazy-doc/compare/v0.2.15...v0.2.16) (2021-08-14)
 
 
 ### Bug Fixes
